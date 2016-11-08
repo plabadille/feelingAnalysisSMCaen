@@ -1,4 +1,6 @@
 // Mongo
-MONGO_USER = ""
-MONGO_PASS = ""
-MONGO_DB = ""
+define('HOST', 'yourHost');
+define('PORT', yourPort);
+define('DATABASE', 'yourDatabase');
+define('USER', 'yourUsername');
+define('PASSWORD', 'yourPassword');
