@@ -1,3 +1,4 @@
+<?php
 // Mongo
 define('HOST', 'yourHost');
 define('PORT', yourPort);
