@@ -12,13 +12,19 @@ app.use(express.static(path.join(__dirname,"../client")));
 app.set('views', path.join(__dirname, '../client/views/'));
 app.use(dbGraph);
 app.use(dbSearch);
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
 	mongo.getParseTweets((tweets) => {
 		res.render('indexGraph.twig', {
     		//tweets : tweets
   		});
 	});
-
+});*/
+app.get('/', (req, res) => {
+	mongo.countTweetsFeeling((tweets) => {
+		res.render('indexGraph.twig', {
+    		tweets : tweets
+  		});
+	});
 });
  
 /*app.get('/', function(req, res) {

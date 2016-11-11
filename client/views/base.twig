@@ -7,9 +7,11 @@
 	<head>
 	{% block head %}
 		<title>{% block title %}{% endblock %}</title>
-		<!-- Latest compiled and minified CSS -->
         <script src="../lib/amcharts/amcharts.js" type="text/javascript"></script>
         <script src="../lib/amcharts/pie.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="../css/styles.css">
+	{% endblock %}
+	{% block javascripts %}
 	{% endblock %}
 	</head>
 	<body>
