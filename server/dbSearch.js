@@ -5,8 +5,12 @@ const router = express.Router();
 
 
 router.get('/dbSearch', (req, res) => {
-    res.end('dbSearch');
-});
+    
+    mongo.countTweetsFeeling((posts) => {
+        console.dir(posts);
+        res.json(posts);
+    });
 
+});
 
 module.exports = router;
