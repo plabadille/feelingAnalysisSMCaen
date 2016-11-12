@@ -1,16 +1,23 @@
 const config = require('../config/config.json');
 const mongoClient = require('mongodb').MongoClient;
 
-//Navigation:
-//1- get the connexion to MongoDb
-//2- Get the data needed in mongo
-//3- Set of data needed for Twitter and Facebook displaying
-    //3-1- Generic function called by the function in 3-2
-    //3-2- Function returning the set of Data needed client size <---- FUNCTION to launch and get in FRONT 
-//4- Agregate parse data: <---- temporary function, will be replace client side later on
+//------------------------------------
+//navigation
+//------------------------------------
+//1- Global function (module.exports)
+    //1-1- connexion to MongoDb
+    //1-2- tweets associated with sentiment
+    //1-3- posts associated with sentiment
+    //1-4- agregate parse data: <---- temporary function, will be replace client side later on
+//2- Private function needed by 1-
+//------------------------------------
 
-const obj = {
-    //1-get the connexion to MongoDb
+//------------------------------------
+//1- Global function (module.exports)
+//------------------------------------
+const public = {
+    //1-1- connexion to MongoDb:
+    //------------------------------------
     init: () => {
         return new Promise((resolve, reject) => {
             mongoClient.connect('mongodb://'+config.host+':'+config.port+'/'+config.database, {auth:{authdb:"admin"}}, (err, db) => {
@@ -18,106 +25,23 @@ const obj = {
                     reject(err);
                     return console.dir(err);
                 }
-                obj.db = db;
+                public.db = db;
 
                 resolve(db);
             });
         });
     },
-    //2-Get the data needed in mongo
-    getParseTweets: (callback) => {
-        const collection = obj.db.collection('parseTweets');
-        collection.find().toArray((err, items) => {
-            callback(items);
-        });
-    },
-    getParsePosts: (callback) => {
-        const collection = obj.db.collection('parseComments');
-        collection.find().toArray((err, items) => {
-            callback(items);
-        });
-    },
-    // getCrawlTweets: (callback) => {
-    //     const collection = obj.db.collection('tweets');
-    //     collection.find().toArray((err, items) => {
-    //         callback(items);
-    //     });
-    // },
-    // getCrawlPosts: (callback) => {
-    //     const collection = obj.db.collection('posts');
-    //     collection.find().toArray((err, items) => {
-    //         callback(items);
-    //     });
-    // },
-    //get message (and id):
-    getCrawlTweetsMessages: (callback) => {
-        const collection = obj.db.collection('tweets'); 
 
-        collection.find( {} ,{"id":1,"text":1,"created_at":1} ).toArray((err, items) => {
-            callback(items);
-        });
-    },
-    getCrawlPostsMessages: (callback) => {
-        const collection = obj.db.collection('posts'); 
-
-        collection.find( {} ,{"comments":1} ).toArray((err, items) => {
-            callback(items);
-        });
-    },
-    //3-Set of data needed for Twitter and Facebook displaying:
-    //3-1- Generic function called by the function in 3-2 (use to add the sentiment):
-    addSentimentToComments: (comment, callback) => {
-        let called = false;
-
-        obj.getParsePosts((sentimentPosts) => {
-            sentimentPosts.forEach((sentimentPost) => {
-                if (sentimentPost.idComment == comment.id) {
-                    callback({
-                        id : comment.id,
-                        message : comment.message,
-                        created_time : comment.created_time,
-                        like_count : comment.like_count,
-                        feeling : sentimentPost.label
-                    });
-                    called = true;
-                    return;
-                }
-            });
-            if (!called){
-                callback();
-            }    
-        });
-    },
-    addSentimentToTweets: (tweet, callback) => {
-        let called = false;
-
-        obj.getParseTweets((sentimentTweets) => {
-            sentimentTweets.forEach((sentimentTweet) => {
-                if (sentimentTweet.idTweet == tweet.id) {
-                    callback({
-                        id : tweet.id,
-                        text : tweet.text,
-                        created_at : tweet.created_at,
-                        feeling : sentimentTweet.label
-                    });
-                    called = true;
-                    return;
-                }
-            });
-            if (!called){
-                callback();
-            } 
-        });
-    },
-    //3-2- function returning the set of Data needed client size:
+    //1-2- tweets associated with sentiment:
+    //------------------------------------
     retrieveTweetsWithSentiment: (callback) => {
         const tweetsWithSentiment = [];
         let total = 0;
 
-        obj.getCrawlTweetsMessages((tweets) => {
+        privates.getCrawlTweetsMessages((tweets) => {
             tweets.forEach((tweet) => {
                 total++;
-                obj.addSentimentToTweets(tweet, (data) => {
+                privates.addSentimentToTweets(tweet, (data) => {
                     if (data != undefined) {
                         tweetsWithSentiment.push(data);
                     } else { //no match
@@ -131,15 +55,17 @@ const obj = {
             });
         });
     },
+    //1-3- posts associated with sentiment:
+    //------------------------------------
     retrieveCommentsWithSentiment: (callback) => {
         const postsWithSentiment = [];
         let total = 0;
 
-        obj.getCrawlPostsMessages((posts) => {
+        privates.getCrawlPostsMessages((posts) => {
             posts.forEach((post) => {
                 post.comments.data.forEach((comment, index) => {
                     total++;
-                    obj.addSentimentToComments(comment, (data) => {
+                    privates.addSentimentToComments(comment, (data) => {
                         if (data != undefined) {
                             postsWithSentiment.push(data);
                         } else { //no match
@@ -155,13 +81,14 @@ const obj = {
         });
     },
     //4-agregate parse data: <---- temporary function, will be replace client side
+    //------------------------------------
     countTweetsFeeling: (callback) => {
         const feeling = {
             pos : 0,
             neg : 0,
             neutral : 0
         };
-        obj.getParseTweets((tweets) => {
+        privates.getParseTweets((tweets) => {
             tweets.forEach((tweet) => {
                 switch (tweet.label){
                     case "pos":
@@ -184,7 +111,7 @@ const obj = {
             neg : 0,
             neutral : 0
         };
-        obj.getParsePosts((posts) => {
+        privates.getParsePosts((posts) => {
             posts.forEach((post) => {
                 switch (post.label){
                     case "pos":
@@ -200,39 +127,84 @@ const obj = {
             });
             callback(feeling);
         });
-    },
-    //displaying content message function:
-    //generic function to add the feeling:
-    
-    
-    // retrieveCommentsByDate: (callback) => {
-    //     const date = "2016-10-23";
-    //     const postByDate = [];
-    //     let total = 0;
-
-    //     obj.getCrawlPostsMessages((posts) => {
-    //         posts.forEach((post) => {
-    //             post.comments.data.forEach((comment, index) => {
-    //                 const dateTmp = comment.created_time.split("T")[0];
-    //                 if (date == dateTmp) {
-    //                     total++;
-
-    //                     obj.addSentimentToComments(comment, (data) => {
-    //                         if (data != undefined) {
-    //                             postByDate.push(data);
-    //                         } else {
-    //                             console.log(comment);
-    //                         }
-
-    //                         if (--total === 0) {
-    //                             callback(postByDate);
-    //                         }
-    //                     });
-    //                 }
-    //             });
-    //         });
-    //     });
-    // },
+    }
 };
 
-module.exports = obj;
+module.exports = public;
+//------------------------------------
+
+
+//------------------------------------
+//2- Privates functions (needed by 1-)
+//------------------------------------
+const privates = {
+    getParseTweets: (callback) => {
+        const collection = public.db.collection('parseTweets');
+        collection.find().toArray((err, items) => {
+            callback(items);
+        });
+    },
+    getParsePosts: (callback) => {
+        const collection = public.db.collection('parseComments');
+        collection.find().toArray((err, items) => {
+            callback(items);
+        });
+    },
+    getCrawlTweetsMessages: (callback) => {
+        const collection = public.db.collection('tweets'); 
+
+        collection.find( {} ,{"id":1,"text":1,"created_at":1} ).toArray((err, items) => {
+            callback(items);
+        });
+    },
+    getCrawlPostsMessages: (callback) => {
+        const collection = public.db.collection('posts'); 
+
+        collection.find( {} ,{"comments":1} ).toArray((err, items) => {
+            callback(items);
+        });
+    },
+    addSentimentToComments: (comment, callback) => {
+        let called = false;
+
+        privates.getParsePosts((sentimentPosts) => {
+            sentimentPosts.forEach((sentimentPost) => {
+                if (sentimentPost.idComment == comment.id) {
+                    callback({
+                        id : comment.id,
+                        message : comment.message,
+                        created_time : comment.created_time,
+                        like_count : comment.like_count,
+                        feeling : sentimentPost.label
+                    });
+                    called = true;
+                    return;
+                }
+            });
+            if (!called){
+                callback();
+            }    
+        });
+    },
+    addSentimentToTweets: (tweet, callback) => {
+        let called = false;
+
+        privates.getParseTweets((sentimentTweets) => {
+            sentimentTweets.forEach((sentimentTweet) => {
+                if (sentimentTweet.idTweet == tweet.id) {
+                    callback({
+                        id : tweet.id,
+                        text : tweet.text,
+                        created_at : tweet.created_at,
+                        feeling : sentimentTweet.label
+                    });
+                    called = true;
+                    return;
+                }
+            });
+            if (!called){
+                callback();
+            } 
+        });
+    },
+};
