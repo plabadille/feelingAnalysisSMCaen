@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.get('/dbGraph', (req, res) => {
-    mongo.retrieveCommentsByDate((tweets) => {
+    mongo.retrieveTweetsWithSentiment((tweets) => {
         res.json(tweets);
     });
 });
