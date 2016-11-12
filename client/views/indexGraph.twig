@@ -2,25 +2,25 @@
 {% block title %}Index{% endblock %}
 {% block javascripts %}
 <script>
-		var chart;
-		var legend;
+	var chart;
+	var legend;
 
-		var chartData = [
-		{
-			"sentiment": "Positif",
-			"value": {{ tweets.pos }}
-		},
-		{
-			"sentiment": "Neutre",
-			"value": {{ tweets.neutral }}
-		},
-		{
-			"sentiment": "Négatif",
-			"value": {{ tweets.neg }}
-		},
-		];
+	var chartData = [
+	{
+		"sentiment": "Positif",
+		"value": {{ tweets.pos }}
+	},
+	{
+		"sentiment": "Neutre",
+		"value": {{ tweets.neutral }}
+	},
+	{
+		"sentiment": "Négatif",
+		"value": {{ tweets.neg }}
+	},
+	];
 
-		AmCharts.ready(function () {
+	AmCharts.ready(function () {
 	                // PIE CHART
 	                chart = new AmCharts.AmPieChart();
 	                chart.dataProvider = chartData;
@@ -37,8 +37,53 @@
 	                // WRITE
 	                chart.write("chartdiv");
 	            });
-	</script>
-{% endblock %}
-{% block body %}
-	<div id="chartdiv"></div>
-{% endblock %}
+	        </script>
+	        {% endblock %}
+	        {% block body %}
+	        <div class="row">
+	        	<form class="col s12">
+	        	<div class="row">
+	        		<nav>
+	        			<div class="nav-wrapper col s12">
+	        				<form>
+	        					<div class="input-field">
+	        						<input id="search" type="search" required>
+	        						<label for="search"><i class="material-icons">search</i></label>
+	        						<i class="material-icons">close</i>
+	        					</div>
+	        				</form>
+	        			</div>
+	        		</nav>
+	        		</div>
+	        		<div class="row">
+	        			<div class="switch col s6">
+	        				<label>
+	        					Twitter
+	        					<input type="checkbox" name="social" value="twitter">
+	        					<span class="lever"></span>
+	        				</label>
+	        			</div>
+	        			<div class="switch col s6">
+	        				<label>
+	        					Facebook
+	        					<input type="checkbox" name="social" value="facebook">
+	        					<span class="lever"></span>
+	        				</label>
+	        			</div>
+	        		</div>
+	        		<div class="row">
+	        			<label>Date de début : </label><input type="date" class="datepicker col s12" id="dateDebut">
+	        		</div>
+	        		<div class="row">
+	        			<label>Date de fin : </label><input type="date" class="datepicker col s12" id="dateFin">
+	        		</div>
+	        		<div class="row">
+	        			<button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+	        				<i class="material-icons right">send</i>
+	        			</button>
+	        		</div>
+	        	</form>
+	        </div>
+	        <div id="chartdiv"></div>
+	        
+	        {% endblock %}
