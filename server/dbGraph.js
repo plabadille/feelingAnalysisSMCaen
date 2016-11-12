@@ -5,8 +5,9 @@ const router = express.Router();
 
 
 router.get('/dbGraph', (req, res) => {
-    res.end('dbGraph');
+    mongo.retrieveCommentsByDate((tweets) => {
+        res.json(tweets);
+    });
 });
-
 
 module.exports = router;
