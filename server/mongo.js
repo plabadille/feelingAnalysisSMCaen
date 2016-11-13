@@ -194,8 +194,8 @@ const privates = {
                 if (sentimentTweet.idTweet == tweet.id) {
                     callback({
                         id : tweet.id,
-                        text : tweet.text,
-                        created_at : tweet.created_at,
+                        message : tweet.text,
+                        created_time : tweet.created_at,
                         feeling : sentimentTweet.label
                     });
                     called = true;
