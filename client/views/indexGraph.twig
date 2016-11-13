@@ -1,6 +1,73 @@
 {% extends 'base.twig' %}
 {% block title %}Index{% endblock %}
-{{ dump(tweet) }}
+	        {% block body %}
+	        <div id="chartdiv"></div>
+	        <div class="row">
+	        	<form class="col s12">
+	        		<div class="row">
+	        			<nav>
+	        				<div class="nav-wrapper col s12">
+	        					<form>
+	        						<div class="input-field">
+	        							<input id="search" type="search" required>
+	        							<label for="search"><i class="material-icons">search</i></label>
+	        							<i class="material-icons">close</i>
+	        						</div>
+	        					</form>
+	        				</div>
+	        			</nav>
+	        		</div>
+	        		<div class="row">
+	        			<div class="switch col s6">
+	        				<label>
+	        					Twitter
+	        					<input type="checkbox" name="social" value="twitter" checked="checked">
+	        					<span class="lever"></span>
+	        				</label>
+	        			</div>
+	        			<div class="switch col s6">
+	        				<label>
+	        					Facebook
+	        					<input type="checkbox" name="social" value="facebook" checked="checked">
+	        					<span class="lever"></span>
+	        				</label>
+	        			</div>
+	        		</div>
+	        		<div class="row">
+	        			<p class="col s6">
+	        				<input type="checkbox" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
+	        				<label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
+	        			</p>
+	        			<p class="col s6">
+	        				<input type="checkbox" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
+	        				<label for="SMC_ASSE">Match SMC / ASSE</label>
+	        			</p>
+	        			<p class="col s6">
+	        				<input type="checkbox" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
+	        				<label for="ASSE_SMC">Match ASSE / SMC</label>
+	        			</p>
+	        			<p class="col s6">
+	        				<input type="checkbox" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
+	        				<label for="ASNL_SMC">Match ASNL / SMC</label>
+	        			</p>
+	        			<p class="col s6">
+	        				<input type="checkbox" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
+	        				<label for="SMC_OGN">Match SMC / OGN</label>
+	        			</p>
+	        		</div>
+	        		<div class="row">
+	        			<button class="btn waves-effect waves-light right" type="submit" name="action" onclick="listAllTweetsAndComments(document.getElementById('search').value)">Envoyer
+	        				<i class="material-icons right">send</i>
+	        			</button>
+	        		</div>
+	        	</form>
+	        </div>
+	        <ul class="collection" id="collectionTweets">
+	        </ul>
+	        <ul class="collection" id="collectionComments">
+	        </ul>
+	        
+	        {% endblock %}
 {% block javascripts %}
 <script>
 	var chart;
@@ -9,15 +76,15 @@
 	var chartData = [
 	{
 		"sentiment": "Positif",
-		"value": {{ tweets.pos }}
+		"value": {{ feelings.ALL.twitter.pos +  feelings.ALL.facebook.pos }}
 	},
 	{
 		"sentiment": "Neutre",
-		"value": {{ tweets.neutral }}
+		"value": {{ feelings.ALL.twitter.neutral +  feelings.ALL.facebook.neutral }}
 	},
 	{
 		"sentiment": "Négatif",
-		"value": {{ tweets.neg }}
+		"value": {{ feelings.ALL.twitter.neg +  feelings.ALL.facebook.neg }}
 	},
 	];
 
@@ -39,60 +106,46 @@
 	                chart.write("chartdiv");
 	            });
 	        </script>
-	        {% endblock %}
-	        {% block body %}
-	        <div class="row">
-	        	<form class="col s12">
-	        	<div class="row">
-	        		<nav>
-	        			<div class="nav-wrapper col s12">
-	        				<form>
-	        					<div class="input-field">
-	        						<input id="search" type="search" required>
-	        						<label for="search"><i class="material-icons">search</i></label>
-	        						<i class="material-icons">close</i>
-	        					</div>
-	        				</form>
-	        			</div>
-	        		</nav>
-	        		</div>
-	        		<div class="row">
-	        			<div class="switch col s6">
-	        				<label>
-	        					Twitter
-	        					<input type="checkbox" name="social" value="twitter">
-	        					<span class="lever"></span>
-	        				</label>
-	        			</div>
-	        			<div class="switch col s6">
-	        				<label>
-	        					Facebook
-	        					<input type="checkbox" name="social" value="facebook">
-	        					<span class="lever"></span>
-	        				</label>
-	        			</div>
-	        		</div>
-	        		<div class="row">
-	        			<p>
-	        				<input type="checkbox" name="social" value="SMCASS" id="SMCASS" checked="checked">
-	        				<label for="SMCASS">Match SMC / ASS</label>
-	        			</p>
-	        			<p>
-	        				<input type="checkbox" name="social" value="SMCOGC" id="SMCOGC" checked="checked">
-	        				<label for="SMCOGC">Match SMC / OGC</label>
-	        			</p>
-	        			<p>
-	        				<input type="checkbox" name="social" value="SMCASNL" id="SMCASNL" checked="checked">
-	        				<label for="SMCASNL">Match SMC / ASNL</label>
-	        			</p>
-	        		</div>
-	        		<div class="row">
-	        			<button class="btn waves-effect waves-light right" type="submit" name="action">Envoyer
-	        				<i class="material-icons right">send</i>
-	        			</button>
-	        		</div>
-	        	</form>
-	        </div>
-	        <div id="chartdiv"></div>
-	        
+	        <script>
+	        	function listAllTweetsAndComments(keyWord){
+	        		var twitter = true;
+	        		var facebook = true;
+	        		$("#collectionTweets").empty();
+	        		$("#collectionTweets").append("<li class='collection-header'><h4>Tweets</h4></li>");
+	        		{% for tweet in tweets %}
+	        		var tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+	        		{% if tweet.feeling == "pos" %}
+						var feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
+					{% endif %}
+					{% if tweet.feeling == "neutral" %}
+						var feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
+					{% endif %}
+					{% if tweet.feeling == "neg" %}
+						var feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
+					{% endif %}
+					if(tweetMsg.indexOf(keyWord) !== -1) {
+						$("#collectionTweets").append("<li class='collection-item'>"+tweetMsg+feelingTweet+"</li>");
+					}
+	        		{% endfor %}
+	        		$("#collectionComments").append("<li class='collection-header'><h4>Commentaires Facebook</h4></li>");
+	        		{% for comment in comments %}
+	        		var commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+	        		{% if comment.feeling == "pos" %}
+						var feelingComment ='<i class="petite material-icons right">thumb_up</i>';
+					{% endif %}
+					{% if comment.feeling == "neutral" %}
+						var feelingComment ='<i class="petite material-icons right">thumbs_up_down</i>';
+					{% endif %}
+					{% if comment.feeling == "neg" %}
+						var feelingComment ='<i class="petite material-icons right">thumb_down</i>';
+					{% endif %}
+					if(commentMsg.indexOf(keyWord) !== -1) {
+						$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment+"</li>");
+					}
+	        		{% endfor %}
+	        	}
+	        	window.onload = function(){
+	        		listAllTweetsAndComments("perdre");
+	        	};
+	        </script>
 	        {% endblock %}
