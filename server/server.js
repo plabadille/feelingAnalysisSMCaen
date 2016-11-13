@@ -34,13 +34,13 @@ app.get('/', (req, res) => {
     });
 });
 app.get('/test', (req, res) => {
-    mongo.countTweetsFeeling((tweets) => {
-        mongo.retrieveTweetsWithSentiment((tweet) => {
-            mongo.retrieveCommentsWithSentiment((comments) => {
+    mongo.retrieveTweetsWithSentiment((tweets) => {
+        mongo.retrieveCommentsWithSentiment((comments) => {
+            mongo.countAllFeelingByMatch((feelings) => {
                 res.render('indexGraph2.twig', {
-                    /*tweets : tweets, //to delete..;
-                    tweet : tweet,
-                    comments : comments*/
+                    feelings : feelings, //to delete..;
+                    tweets : tweets,
+                    comments : comments
                 });
             });
         });

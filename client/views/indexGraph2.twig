@@ -1,40 +1,52 @@
 {% extends 'base.twig' %}
 {% block title %}Index{% endblock %}
 
-
 <!-- Chart code -->
 {% block javascripts %}
 <script>
   var chartData = [{
-   "dateMatch": "2000",
+   "nomMatch": "BEGIN",
    "pos": 0,
    "neutral": 0,
    "neg": 0,
    "total": 0
  },{
-   "dateMatch": "2001",
-   "pos": 1098,
-   "neutral": 680,
-   "neg": 910,
-   "total": 2688
+   "nomMatch": "MHSC_SMC",
+   "pos": {{ feelings.MHSC_SMC.facebook.pos +  feelings.MHSC_SMC.twitter.pos }},
+   "neutral": {{ feelings.MHSC_SMC.facebook.neutral +  feelings.MHSC_SMC.twitter.neutral }},
+   "neg": {{ feelings.MHSC_SMC.facebook.neg +  feelings.MHSC_SMC.twitter.neg }},
+   "total": {{ feelings.MHSC_SMC.facebook.pos +  feelings.MHSC_SMC.twitter.pos +  feelings.MHSC_SMC.facebook.neutral +  feelings.MHSC_SMC.twitter.neutral + feelings.MHSC_SMC.facebook.neg +  feelings.MHSC_SMC.twitter.neg }}
+ },{
+   "nomMatch": "SMC_ASSE",
+   "pos": {{ feelings.SMC_ASSE.facebook.pos +  feelings.SMC_ASSE.twitter.pos }},
+   "neutral": {{ feelings.SMC_ASSE.facebook.neutral +  feelings.SMC_ASSE.twitter.neutral }},
+   "neg": {{ feelings.SMC_ASSE.facebook.neg +  feelings.SMC_ASSE.twitter.neg }},
+   "total": {{ feelings.SMC_ASSE.facebook.pos +  feelings.SMC_ASSE.twitter.pos +  feelings.SMC_ASSE.facebook.neutral +  feelings.SMC_ASSE.twitter.neutral + feelings.SMC_ASSE.facebook.neg +  feelings.SMC_ASSE.twitter.neg }}
  }, {
-   "dateMatch": "2002",
-   "pos": 975,
-   "neutral": 664,
-   "neg": 670,
-   "total": 2400
+   "nomMatch": "ASSE_SMC",
+   "pos": {{ feelings.ASSE_SMC.facebook.pos +  feelings.ASSE_SMC.twitter.pos }},
+   "neutral": {{ feelings.ASSE_SMC.facebook.neutral +  feelings.ASSE_SMC.twitter.neutral }},
+   "neg": {{ feelings.ASSE_SMC.facebook.neg +  feelings.ASSE_SMC.twitter.neg }},
+   "total": {{ feelings.ASSE_SMC.facebook.pos +  feelings.ASSE_SMC.twitter.pos +  feelings.ASSE_SMC.facebook.neutral +  feelings.ASSE_SMC.twitter.neutral + feelings.ASSE_SMC.facebook.neg +  feelings.ASSE_SMC.twitter.neg }}
  }, {
-   "dateMatch": "2003",
-   "pos": 1246,
-   "neutral": 648,
-   "neg": 930,
-   "total": 3000
+   "nomMatch": "ASNL_SMC",
+   "pos": {{ feelings.ASNL_SMC.facebook.pos +  feelings.ASNL_SMC.twitter.pos }},
+   "neutral": {{ feelings.ASNL_SMC.facebook.neutral +  feelings.ASNL_SMC.twitter.neutral }},
+   "neg": {{ feelings.ASNL_SMC.facebook.neg +  feelings.ASNL_SMC.twitter.neg }},
+   "total": {{ feelings.ASNL_SMC.facebook.pos +  feelings.ASNL_SMC.twitter.pos +  feelings.ASNL_SMC.facebook.neutral +  feelings.ASNL_SMC.twitter.neutral + feelings.ASNL_SMC.facebook.neg +  feelings.ASNL_SMC.twitter.neg }}
  }, {
-   "dateMatch": "2004",
-   "pos": 1218,
-   "neutral": 637,
-   "neg": 1010,
-   "total": 3000
+   "nomMatch": "SMC_OGN",
+   "pos": {{ feelings.SMC_OGN.facebook.pos +  feelings.SMC_OGN.twitter.pos }},
+   "neutral": {{ feelings.SMC_OGN.facebook.neutral +  feelings.SMC_OGN.twitter.neutral }},
+   "neg": {{ feelings.SMC_OGN.facebook.neg +  feelings.SMC_OGN.twitter.neg }},
+   "total": {{ feelings.SMC_OGN.facebook.pos +  feelings.SMC_OGN.twitter.pos +  feelings.SMC_OGN.facebook.neutral +  feelings.SMC_OGN.twitter.neutral + feelings.SMC_OGN.facebook.neg +  feelings.SMC_OGN.twitter.neg }}
+ },
+ {
+   "nomMatch": "END",
+   "pos": 0,
+   "neutral": 0,
+   "neg": 0,
+   "total": 0
  }];
 
  var chart =  AmCharts.makeChart("chartdiv2", {
@@ -94,15 +106,7 @@
   "marginRight": 1,
   "marginLeft": 0,
   "autoMarginOffset": 5,
-  "categoryField": "dateMatch",
-  "categoryAxis": {
-    "gridAlpha": 0.07,
-    "axisColor": "#DADADA",
-    "startOnAxis": true,
-    "tickLength": 0,
-    "parseDates": true,
-    "minPeriod": "YYYY"
-  },
+  "categoryField": "nomMatch",
   "valueAxes": [
   {
     "ignoreAxisWidth":true,
@@ -188,6 +192,6 @@ function zoomChart(){
 </script>
 {% endblock %}
 {% block body %}
-<!-- HTML -->
+<pre></pre>
 <div id="chartdiv2"></div>
 {% endblock %}
