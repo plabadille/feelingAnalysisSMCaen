@@ -176,11 +176,10 @@ const public = {
                             if (explodeDate[1] == "Oct") {
                                 var month = "10";
                             } else { // explode == Nov <-- valable uniquement pour notre bd. transformer en switch sinon
-                                var month = "10";
+                                var month = "11";
                             }
                             //Sun Oct 30 12:50:40 +0000 2016 (exemple format date twitter)
                             let dateTmp = explodeDate[5] + "-" + month + "-" + explodeDate[2];
-
                             if (date == dateTmp) {
                                 switch (tweet.feeling) {
                                         case "pos":
