@@ -2,7 +2,7 @@
   width: 100%;
   height: 400px;
 }
-#chartdiv a {
+#chartdiv a,#chartdiv2 a {
 	display: none !important;
 }
 body {
@@ -22,4 +22,25 @@ nav .brand-logo {
 }
 nav .nav-wrapper nav ul {
   padding-right: 25px;
+}
+#chartdiv2 {
+  width: 96%;
+  height: 475px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 15px;
+}
+
+.amcharts-graph-g1 .amcharts-graph-fill {
+  filter: url(#blur);
+}
+
+.amcharts-graph-g2 .amcharts-graph-fill {
+  filter: url(#blur);
+}
+.amcharts-graph-g3 .amcharts-graph-fill {
+  filter: url(#blur);
+}
+.amcharts-cursor-fill {
+  filter: url(#shadow);
 }

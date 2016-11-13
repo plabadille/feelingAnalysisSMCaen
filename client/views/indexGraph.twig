@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
 {% block title %}Index{% endblock %}
+{{ dump(tweet) }}
 {% block javascripts %}
 <script>
 	var chart;
@@ -72,13 +73,21 @@
 	        			</div>
 	        		</div>
 	        		<div class="row">
-	        			<label>Date de début : </label><input type="date" class="datepicker col s12" id="dateDebut">
+	        			<p>
+	        				<input type="checkbox" name="social" value="SMCASS" id="SMCASS" checked="checked">
+	        				<label for="SMCASS">Match SMC / ASS</label>
+	        			</p>
+	        			<p>
+	        				<input type="checkbox" name="social" value="SMCOGC" id="SMCOGC" checked="checked">
+	        				<label for="SMCOGC">Match SMC / OGC</label>
+	        			</p>
+	        			<p>
+	        				<input type="checkbox" name="social" value="SMCASNL" id="SMCASNL" checked="checked">
+	        				<label for="SMCASNL">Match SMC / ASNL</label>
+	        			</p>
 	        		</div>
 	        		<div class="row">
-	        			<label>Date de fin : </label><input type="date" class="datepicker col s12" id="dateFin">
-	        		</div>
-	        		<div class="row">
-	        			<button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+	        			<button class="btn waves-effect waves-light right" type="submit" name="action">Envoyer
 	        				<i class="material-icons right">send</i>
 	        			</button>
 	        		</div>

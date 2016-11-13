@@ -33,6 +33,19 @@ app.get('/', (req, res) => {
         });
     });
 });
+app.get('/test', (req, res) => {
+    mongo.countTweetsFeeling((tweets) => {
+        mongo.retrieveTweetsWithSentiment((tweet) => {
+            mongo.retrieveCommentsWithSentiment((comments) => {
+                res.render('indexGraph2.twig', {
+                    /*tweets : tweets, //to delete..;
+                    tweet : tweet,
+                    comments : comments*/
+                });
+            });
+        });
+    });
+});
  
 /*app.get('/', function(req, res) {
     res.render('index.twig', {
