@@ -1,207 +1,6 @@
 {% extends 'base.twig' %}
 {% block title %}Index{% endblock %}
 
-<!-- Chart code -->
-{% block javascripts %}
-<script>
-
-const feelings = {{ feelings|json_encode() }};
-
-// make it dynamic later, depends of the form:
-//think to change the first if in the for
-var twitter = true;
-var facebook = true;
-//-------------------------------------------
-
-var chartData = [];
-chartData.push({
-  "nomMatch": "BEGIN",
-  "pos": 0,
-  "neutral": 0,
-  "neg": 0,
-  "total": 0
-});
-
-for (var match in feelings) {
-  let pos = 0;
-  let neutral = 0;
-  let neg = 0;
-  if (match != "ALL") { // <- à modifier en == matchSelected (pour le dynamique)
-    if (twitter) {
-      if (facebook) { //both
-        pos = feelings[match].facebook.pos + feelings[match].twitter.pos;
-        neutral = feelings[match].facebook.neutral + feelings[match].twitter.neutral;
-        neg = feelings[match].facebook.neg + feelings[match].twitter.neg;
-      } else { //que twitter
-        pos = feelings[match].twitter.pos;
-        neutral = feelings[match].twitter.neutral;
-        neg = feelings[match].twitter.neg;
-      }
-    } else { //que facebook
-      pos = feelings[match].facebook.pos;
-      neutral = feelings[match].facebook.neutral;
-      neg = feelings[match].facebook.neg;
-    }
-    chartData.push({
-          "nomMatch": match,
-          "pos": pos,
-          "neutral": neutral,
-          "neg": neg,
-          "total": pos + neutral + neg
-    });  
-  }
-}
-
-  chartData.push({
-    "nomMatch": "END",
-    "pos": 0,
-    "neutral": 0,
-    "neg": 0,
-    "total": 0
-  });
-
- var chart =  AmCharts.makeChart("chartdiv2", {
-  "type": "serial",
-  "theme": "light",
-
-  "fontFamily": "Lato",
-  "autoMargins": true,
-  "addClassNames": true,
-  "zoomOutText": "",
-  "defs": {
-    "filter": [
-    {
-      "x": "-50%",
-      "y": "-50%",
-      "width": "200%",
-      "height": "200%",
-      "id": "blur",
-      "feGaussianBlur": {
-        "in": "SourceGraphic",
-        "stdDeviation": "50"
-      }
-    },
-    {
-      "id": "shadow",
-      "width": "150%",
-      "height": "150%",
-      "feOffset": {
-        "result": "offOut",
-        "in": "SourceAlpha",
-        "dx": "2",
-        "dy": "2"
-      },
-      "feGaussianBlur": {
-        "result": "blurOut",
-        "in": "offOut",
-        "stdDeviation": "10"
-      },
-      "feColorMatrix": {
-        "result": "blurOut",
-        "type": "matrix",
-        "values": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .2 0"
-      },
-      "feBlend": {
-        "in": "SourceGraphic",
-        "in2": "blurOut",
-        "mode": "normal"
-      }
-    }
-    ]
-  },
-  "fontSize": 15,
-  "pathToImages": "../amcharts/images/",
-  "dataProvider": chartData,
-  "dataDateFormat": "YYYY",
-  "marginTop": 0,
-  "marginRight": 1,
-  "marginLeft": 0,
-  "autoMarginOffset": 5,
-  "categoryField": "nomMatch",
-  "valueAxes": [
-  {
-    "ignoreAxisWidth":true,
-    "stackType": "regular",
-    "gridAlpha": 0.07,
-    "axisAlpha": 0,
-    "inside": true
-  }
-  ],
-  "graphs": [
-  {
-    "id": "g1",
-    "type": "line",
-    "title": "Positif",
-    "valueField": "pos",
-    "fillColors": "#0066e3",
-    "lineAlpha": 0,
-    "fillAlphas": 0.8,
-    "showBalloon": false
-  },
-  {
-    "id": "g2",
-    "type": "line",
-    "title": "Neutre",
-    "valueField": "neutral",
-    "lineAlpha": 0,
-    "fillAlphas": 0.8,
-    "lineColor": "#5bb5ea",
-    "showBalloon": false
-  },
-  ,
-  {
-    "id": "g3",
-    "type": "line",
-    "title": "Négatif",
-    "valueField": "neg",
-    "lineAlpha": 0,
-    "fillAlphas": 0.8,
-    "lineColor": "#802ea9",
-    "showBalloon": false
-  },
-  {
-    "id": "g4",
-    "title": "Total",
-    "valueField": "total",
-    "lineAlpha": 0.5,
-    "lineColor": "black",
-    "bullet": "round",
-    "dashLength": 2,
-    "bulletBorderAlpha": 1,
-    "bulletAlpha": 1,
-    "bulletSize": 15,
-    "stackable": false,
-    "bulletColor": "#5d7ad9",
-    "bulletBorderColor": "black",
-    "bulletBorderThickness": 3,
-    "balloonText": "<div style='margin-bottom:30px;text-shadow: 2px 2px rgba(0, 0, 0, 0.1); font-weight:200;font-size:30px; color:black'>[[value]]</div>"
-  }],
-  "chartCursor": {
-    "cursorAlpha": 1,
-    "zoomable": false,
-    "cursorColor": "#FFFFFF",
-    "categoryBalloonColor": "#8d83c8",
-    "fullWidth": true,
-    "categoryBalloonDateFormat": "YYYY",
-    "balloonPointerOrientation": "vertical"
-  },
-  "balloon": {
-    "borderAlpha": 0,
-    "fillAlpha": 0,
-    "shadowAlpha": 0,
-    "offsetX": 40,
-    "offsetY": -50
-  }
-});
-
-// we zoom chart in order to have better blur (form side to side)
-chart.addListener("dataUpdated", zoomChart);
-
-function zoomChart(){
-  chart.zoomToIndexes(1, chartData.length - 2);
-}
-</script>
-{% endblock %}
 {% block body %}
 <div class="row">
   <h2>Filtres possibles:</h2>
@@ -210,42 +9,42 @@ function zoomChart(){
       <div class="switch col s6">
         <label>
           Twitter
-          <input type="checkbox" name="social" value="twitter" checked="checked">
+          <input id="twitterBouton" type="checkbox" name="social" value="twitter" checked="checked">
           <span class="lever"></span>
         </label>
       </div>
       <div class="switch col s6">
         <label>
           Facebook
-          <input type="checkbox" name="social" value="facebook" checked="checked">
+          <input id="facebookBouton" type="checkbox" name="social" value="facebook" checked="checked">
           <span class="lever"></span>
         </label>
       </div>
     </div>
     <div class="row">
       <p>
-        <input type="checkbox" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
+        <input type="checkbox" class="choosenMatch" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
         <label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
       </p>
       <p>
-        <input type="checkbox" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
+        <input type="checkbox" class="choosenMatch" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
         <label for="SMC_ASSE">Match SMC / ASSE</label>
       </p>
       <p>
-        <input type="checkbox" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
+        <input type="checkbox" class="choosenMatch" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
         <label for="ASSE_SMC">Match ASSE / SMC</label>
       </p>
       <p>
-        <input type="checkbox" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
+        <input type="checkbox" class="choosenMatch" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
         <label for="ASNL_SMC">Match ASNL / SMC</label>
       </p>
       <p>
-        <input type="checkbox" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
+        <input type="checkbox" class="choosenMatch" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
         <label for="SMC_OGN">Match SMC / OGN</label>
       </p>
     </div>
     <div class="row">
-      <button class="btn waves-effect waves-light center" type="submit" name="action">Envoyer
+      <button id ="submitBouton" class="btn waves-effect waves-light center" type="submit" name="action">Envoyer
         <i class="material-icons right">send</i>
       </button>
     </div>
@@ -253,4 +52,235 @@ function zoomChart(){
 </div>
 <pre></pre>
 <div id="chartdiv2"></div>
+{% endblock %}
+
+<!-- Chart code -->
+{% block javascripts %}
+<script>
+
+const feelings = {{ feelings|json_encode() }};
+
+//cas par defaut au chargement de la page:
+let matchArray = ["MHSC_SMC", "SMC_ASSE", "ASSE_SMC", "ASNL_SMC", "SMC_OGN"]
+var chartData = chartDataDynamic(true, true, matchArray);
+var chart = makeChartDynamic();
+
+//cas choisi par l'utilisateur via le formulaire:
+var submitBouton = document.querySelector("#submitBouton");
+submitBouton.onclick = function(event) {
+  event.preventDefault();
+  console.log("displaying new chart");
+  //on regarde si les boutons fb et twitter sont cochés:
+  let facebook = document.querySelector("#twitterBouton").checked;
+  let twitter = document.querySelector("#facebookBouton").checked;
+  //on regarde quel match sont selectionné:
+  let choosenMatch = document.querySelectorAll(".choosenMatch");
+  let matchArray = [];
+  for ( let match in choosenMatch ) {
+    if (choosenMatch[match].checked){
+      matchArray.push(choosenMatch[match].getAttribute("value"));
+    }
+  }
+  //on génére puis affiche la nouvelle chart:
+  chartData = chartDataDynamic(facebook, twitter, matchArray);
+  chart = makeChartDynamic();
+}
+
+//fonction générant les datas de la chart
+function chartDataDynamic(twitter, facebook, matchArray){
+  //-------------------------------------------
+
+  var chartData = [];
+  chartData.push({
+    "nomMatch": "BEGIN",
+    "pos": 0,
+    "neutral": 0,
+    "neg": 0,
+    "total": 0
+  });
+
+  matchArray.forEach((match) => {
+  // for (var match in matchArray) {
+    let pos = 0;
+    let neutral = 0;
+    let neg = 0;
+    if (match != "ALL") { // <- à modifier en == matchSelected (pour le dynamique)
+      if (twitter) {
+        if (facebook) { //both
+          pos = feelings[match].facebook.pos + feelings[match].twitter.pos;
+          neutral = feelings[match].facebook.neutral + feelings[match].twitter.neutral;
+          neg = feelings[match].facebook.neg + feelings[match].twitter.neg;
+        } else { //que twitter
+          pos = feelings[match].twitter.pos;
+          neutral = feelings[match].twitter.neutral;
+          neg = feelings[match].twitter.neg;
+        }
+      } else { //que facebook
+        pos = feelings[match].facebook.pos;
+        neutral = feelings[match].facebook.neutral;
+        neg = feelings[match].facebook.neg;
+      }
+      chartData.push({
+            "nomMatch": match,
+            "pos": pos,
+            "neutral": neutral,
+            "neg": neg,
+            "total": pos + neutral + neg
+      });  
+    }
+  // }
+  });
+  chartData.push({
+    "nomMatch": "END",
+    "pos": 0,
+    "neutral": 0,
+    "neg": 0,
+    "total": 0
+  });
+  return chartData;
+}
+
+//fonction générant la chart:
+function makeChartDynamic() {
+  AmCharts.makeChart("chartdiv2", {
+    "type": "serial",
+    "theme": "light",
+
+    "fontFamily": "Lato",
+    "autoMargins": true,
+    "addClassNames": true,
+    "zoomOutText": "",
+    "defs": {
+      "filter": [
+      {
+        "x": "-50%",
+        "y": "-50%",
+        "width": "200%",
+        "height": "200%",
+        "id": "blur",
+        "feGaussianBlur": {
+          "in": "SourceGraphic",
+          "stdDeviation": "50"
+        }
+      },
+      {
+        "id": "shadow",
+        "width": "150%",
+        "height": "150%",
+        "feOffset": {
+          "result": "offOut",
+          "in": "SourceAlpha",
+          "dx": "2",
+          "dy": "2"
+        },
+        "feGaussianBlur": {
+          "result": "blurOut",
+          "in": "offOut",
+          "stdDeviation": "10"
+        },
+        "feColorMatrix": {
+          "result": "blurOut",
+          "type": "matrix",
+          "values": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .2 0"
+        },
+        "feBlend": {
+          "in": "SourceGraphic",
+          "in2": "blurOut",
+          "mode": "normal"
+        }
+      }
+      ]
+    },
+    "fontSize": 15,
+    "pathToImages": "../amcharts/images/",
+    "dataProvider": chartData,
+    "dataDateFormat": "YYYY",
+    "marginTop": 0,
+    "marginRight": 1,
+    "marginLeft": 0,
+    "autoMarginOffset": 5,
+    "categoryField": "nomMatch",
+    "valueAxes": [
+    {
+      "ignoreAxisWidth":true,
+      "stackType": "regular",
+      "gridAlpha": 0.07,
+      "axisAlpha": 0,
+      "inside": true
+    }
+    ],
+    "graphs": [
+    {
+      "id": "g1",
+      "type": "line",
+      "title": "Positif",
+      "valueField": "pos",
+      "fillColors": "#0066e3",
+      "lineAlpha": 0,
+      "fillAlphas": 0.8,
+      "showBalloon": false
+    },
+    {
+      "id": "g2",
+      "type": "line",
+      "title": "Neutre",
+      "valueField": "neutral",
+      "lineAlpha": 0,
+      "fillAlphas": 0.8,
+      "lineColor": "#5bb5ea",
+      "showBalloon": false
+    },
+    ,
+    {
+      "id": "g3",
+      "type": "line",
+      "title": "Négatif",
+      "valueField": "neg",
+      "lineAlpha": 0,
+      "fillAlphas": 0.8,
+      "lineColor": "#802ea9",
+      "showBalloon": false
+    },
+    {
+      "id": "g4",
+      "title": "Total",
+      "valueField": "total",
+      "lineAlpha": 0.5,
+      "lineColor": "black",
+      "bullet": "round",
+      "dashLength": 2,
+      "bulletBorderAlpha": 1,
+      "bulletAlpha": 1,
+      "bulletSize": 15,
+      "stackable": false,
+      "bulletColor": "#5d7ad9",
+      "bulletBorderColor": "black",
+      "bulletBorderThickness": 3,
+      "balloonText": "<div style='margin-bottom:30px;text-shadow: 2px 2px rgba(0, 0, 0, 0.1); font-weight:200;font-size:30px; color:black'>[[value]]</div>"
+    }],
+    "chartCursor": {
+      "cursorAlpha": 1,
+      "zoomable": false,
+      "cursorColor": "#FFFFFF",
+      "categoryBalloonColor": "#8d83c8",
+      "fullWidth": true,
+      "categoryBalloonDateFormat": "YYYY",
+      "balloonPointerOrientation": "vertical"
+    },
+    "balloon": {
+      "borderAlpha": 0,
+      "fillAlpha": 0,
+      "shadowAlpha": 0,
+      "offsetX": 40,
+      "offsetY": -50
+    }
+  });
+}
+// we zoom chart in order to have better blur (form side to side)
+chart.addListener("dataUpdated", zoomChart);
+
+function zoomChart(){
+  chart.zoomToIndexes(1, chartData.length - 2);
+}
+</script>
 {% endblock %}
