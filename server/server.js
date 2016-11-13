@@ -19,12 +19,19 @@ app.use(dbSearch);
   		});
 	});
 });*/
+
 app.get('/', (req, res) => {
-	mongo.countTweetsFeeling((tweets) => {
-		res.render('indexGraph.twig', {
-    		tweets : tweets
-  		});
-	});
+    mongo.countTweetsFeeling((tweets) => {
+        mongo.retrieveTweetsWithSentiment((tweet) => {
+            mongo.retrieveCommentsWithSentiment((comments) => {
+                res.render('indexGraph.twig', {
+                    tweets : tweets, //to delete..;
+                    tweet : tweet,
+                    comments : comments
+                });
+            });
+        });
+    });
 });
  
 /*app.get('/', function(req, res) {

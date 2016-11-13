@@ -36,22 +36,24 @@ const public = {
     //------------------------------------
     retrieveTweetsWithSentiment: (callback) => {
         const tweetsWithSentiment = [];
-        let total = 0;
 
         privates.getCrawlTweetsMessages((tweets) => {
-            tweets.forEach((tweet) => {
-                total++;
-                privates.addSentimentToTweets(tweet, (data) => {
-                    if (data != undefined) {
-                        tweetsWithSentiment.push(data);
-                    } else { //no match
-                        console.log(tweet);
-                    }
+            privates.getParseTweets((sentimentTweets) => {
+                tweets.forEach((tweet) => {
+                    for (var i = 0; i < sentimentTweets.length; i++) {
 
-                    if (--total === 0) {
-                        callback(tweetsWithSentiment);
+                        if (sentimentTweets[i].idTweet == tweet.id) {
+                            tweetsWithSentiment.push({
+                                id : tweet.id,
+                                message : tweet.text,
+                                created_time : tweet.created_at,
+                                feeling : sentimentTweets[i].label
+                            });
+                            break;
+                        }
                     }
                 });
+                callback(tweetsWithSentiment);
             });
         });
     },
@@ -59,24 +61,25 @@ const public = {
     //------------------------------------
     retrieveCommentsWithSentiment: (callback) => {
         const postsWithSentiment = [];
-        let total = 0;
 
         privates.getCrawlPostsMessages((posts) => {
-            posts.forEach((post) => {
-                post.comments.data.forEach((comment, index) => {
-                    total++;
-                    privates.addSentimentToComments(comment, (data) => {
-                        if (data != undefined) {
-                            postsWithSentiment.push(data);
-                        } else { //no match
-                            console.log(comment);
-                        }
-
-                        if (--total === 0) {
-                            callback(postsWithSentiment);
-                        }
+            privates.getParsePosts((sentimentPosts) => {
+                posts.forEach((post) => {
+                    post.comments.data.forEach((comment, index) => {
+                        sentimentPosts.forEach((sentimentPost) => {
+                            if (sentimentPost.idComment == comment.id) {
+                                postsWithSentiment.push({
+                                    id : comment.id,
+                                    message : comment.message,
+                                    created_time : comment.created_time,
+                                    like_count : comment.like_count,
+                                    feeling : sentimentPost.label
+                                });
+                            }
+                        });
                     });
                 });
+                callback(postsWithSentiment);
             });
         });
     },
@@ -163,48 +166,5 @@ const privates = {
         collection.find( {} ,{"comments":1} ).toArray((err, items) => {
             callback(items);
         });
-    },
-    addSentimentToComments: (comment, callback) => {
-        let called = false;
-
-        privates.getParsePosts((sentimentPosts) => {
-            sentimentPosts.forEach((sentimentPost) => {
-                if (sentimentPost.idComment == comment.id) {
-                    callback({
-                        id : comment.id,
-                        message : comment.message,
-                        created_time : comment.created_time,
-                        like_count : comment.like_count,
-                        feeling : sentimentPost.label
-                    });
-                    called = true;
-                    return;
-                }
-            });
-            if (!called){
-                callback();
-            }    
-        });
-    },
-    addSentimentToTweets: (tweet, callback) => {
-        let called = false;
-
-        privates.getParseTweets((sentimentTweets) => {
-            sentimentTweets.forEach((sentimentTweet) => {
-                if (sentimentTweet.idTweet == tweet.id) {
-                    callback({
-                        id : tweet.id,
-                        message : tweet.text,
-                        created_time : tweet.created_at,
-                        feeling : sentimentTweet.label
-                    });
-                    called = true;
-                    return;
-                }
-            });
-            if (!called){
-                callback();
-            } 
-        });
-    },
+    }
 };
