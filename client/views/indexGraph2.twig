@@ -203,7 +203,54 @@ function zoomChart(){
 </script>
 {% endblock %}
 {% block body %}
-<!-- <pre>{{ dump(feelings) }}</pre>
- --><pre></pre>
+<div class="row">
+  <h2>Filtres possibles:</h2>
+  <form class="col s12">
+    <div class="row">
+      <div class="switch col s6">
+        <label>
+          Twitter
+          <input type="checkbox" name="social" value="twitter" checked="checked">
+          <span class="lever"></span>
+        </label>
+      </div>
+      <div class="switch col s6">
+        <label>
+          Facebook
+          <input type="checkbox" name="social" value="facebook" checked="checked">
+          <span class="lever"></span>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <p>
+        <input type="checkbox" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
+        <label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
+      </p>
+      <p>
+        <input type="checkbox" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
+        <label for="SMC_ASSE">Match SMC / ASSE</label>
+      </p>
+      <p>
+        <input type="checkbox" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
+        <label for="ASSE_SMC">Match ASSE / SMC</label>
+      </p>
+      <p>
+        <input type="checkbox" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
+        <label for="ASNL_SMC">Match ASNL / SMC</label>
+      </p>
+      <p>
+        <input type="checkbox" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
+        <label for="SMC_OGN">Match SMC / OGN</label>
+      </p>
+    </div>
+    <div class="row">
+      <button class="btn waves-effect waves-light center" type="submit" name="action">Envoyer
+        <i class="material-icons right">send</i>
+      </button>
+    </div>
+  </form>
+</div>
+<pre></pre>
 <div id="chartdiv2"></div>
 {% endblock %}

@@ -31,7 +31,7 @@ nav .nav-wrapper nav ul {
   margin-top: 15px;
 }
 
-.amcharts-graph-g1 .amcharts-graph-fill {
+/* .amcharts-graph-g1 .amcharts-graph-fill {
   filter: url(#blur);
 }
 
@@ -43,4 +43,4 @@ nav .nav-wrapper nav ul {
 }
 .amcharts-cursor-fill {
   filter: url(#shadow);
-}
+} */
