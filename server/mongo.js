@@ -81,52 +81,147 @@ const public = {
             });
         });
     },
-    //4-agregate parse data: <---- temporary function, will be replace client side
-    //------------------------------------
-    countTweetsFeeling: (callback) => {
-        const feeling = {
-            pos : 0,
-            neg : 0,
-            neutral : 0
+    //4-agregate parse date by date:
+    countAllFeelingByMatch: (callback) => {
+        const feelings = {
+            MHSC_SMC : {
+                facebook : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                },
+                twitter : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                } 
+            },
+            SMC_ASSE : {
+                facebook : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                },
+                twitter : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                } 
+            },
+            ASSE_SMC : {
+                facebook : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                },
+                twitter : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                } 
+            },
+            ASNL_SMC : {
+                facebook : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                },
+                twitter : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                } 
+            },
+            SMC_OGN : {
+                facebook : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                },
+                twitter : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                } 
+            },
+            ALL : {
+               facebook : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                },
+                twitter : {
+                    pos : 0,
+                    neg : 0,
+                    neutral : 0
+                } 
+            }
         };
-        privates.getParseTweets((tweets) => {
-            tweets.forEach((tweet) => {
-                switch (tweet.label){
-                    case "pos":
-                        feeling.pos ++;
-                        break;
-                    case "neg":
-                        feeling.neg ++;
-                        break;
-                    case "neutral":
-                        feeling.neutral ++;
-                        break;
-                }
-            });
-            callback(feeling);
-        });
-    },
-    countPostsFeeling: (callback) => {
-        const feeling = {
-            pos : 0,
-            neg : 0,
-            neutral : 0
+
+        var matchDates = {
+            MHSC_SMC : ['2016-10-14', '2016-10-15', '2016-10-16'],
+            SMC_ASSE : ['2016-10-22', '2016-10-23', '2016-10-24'],
+            ASSE_SMC : ['2016-10-25', '2016-10-26', '2016-10-27'],
+            ASNL_SMC : ['2016-10-28', '2016-10-29', '2016-10-30'],
+            SMC_OGN : ['2016-11-05', '2016-11-06', '2016-11-07']
         };
-        privates.getParsePosts((posts) => {
-            posts.forEach((post) => {
-                switch (post.label){
-                    case "pos":
-                        feeling.pos ++;
-                        break;
-                    case "neg":
-                        feeling.neg ++;
-                        break;
-                    case "neutral":
-                        feeling.neutral ++;
-                        break;
+
+        public.retrieveCommentsWithSentiment((comments) => {
+            public.retrieveTweetsWithSentiment((tweets) => {
+                for (var match in matchDates) {
+                    matchDates[match].forEach((date, index) => {
+                        //boucle twitter:
+                        tweets.forEach((tweet) => {
+                            let explodeDate = tweet.created_time.split(" ");
+                            if (explodeDate[1] == "Oct") {
+                                var month = "10";
+                            } else { // explode == Nov <-- valable uniquement pour notre bd. transformer en switch sinon
+                                var month = "10";
+                            }
+                            //Sun Oct 30 12:50:40 +0000 2016 (exemple format date twitter)
+                            let dateTmp = explodeDate[5] + "-" + month + "-" + explodeDate[2];
+
+                            if (date == dateTmp) {
+                                switch (tweet.feeling) {
+                                        case "pos":
+                                            feelings[match].twitter.pos ++;
+                                            feelings.ALL.twitter.pos ++;
+                                            break;
+                                        case "neg":
+                                            feelings[match].twitter.neg ++;
+                                            feelings.ALL.twitter.neg ++;
+                                            break;
+                                        case "neutral":
+                                            feelings[match].twitter.neutral ++;
+                                            feelings.ALL.twitter.neutral ++;
+                                            break;
+                                }
+                            }
+                        });
+                        //boucle facebook:
+                        comments.forEach((comment) => {
+                            let dateTmp = comment.created_time.split("T")[0];
+                            if (date == dateTmp) {
+                                switch (comment.feeling) {
+                                    case "pos":
+                                        feelings[match].facebook.pos ++;
+                                        feelings.ALL.facebook.pos ++;
+                                        break;
+                                    case "neg":
+                                        feelings[match].facebook.neg ++;
+                                        feelings.ALL.facebook.neg ++;
+                                        break;
+                                    case "neutral":
+                                        feelings[match].facebook.neutral ++;
+                                        feelings.ALL.facebook.neutral ++;
+                                        break;
+                                }
+                            }
+                        });
+                    });
                 }
+                callback(feelings);
             });
-            callback(feeling);
         });
     }
 };

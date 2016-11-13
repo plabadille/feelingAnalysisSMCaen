@@ -21,12 +21,12 @@ app.use(dbSearch);
 });*/
 
 app.get('/', (req, res) => {
-    mongo.countTweetsFeeling((tweets) => {
-        mongo.retrieveTweetsWithSentiment((tweet) => {
-            mongo.retrieveCommentsWithSentiment((comments) => {
+    mongo.retrieveTweetsWithSentiment((tweets) => {
+        mongo.retrieveCommentsWithSentiment((comments) => {
+            mongo.countAllFeelingByMatch((feelings) => {
                 res.render('indexGraph.twig', {
-                    tweets : tweets, //to delete..;
-                    tweet : tweet,
+                    feelings : feelings, //to delete..;
+                    tweets : tweets,
                     comments : comments
                 });
             });

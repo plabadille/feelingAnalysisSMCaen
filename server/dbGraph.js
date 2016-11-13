@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.get('/dbGraph', (req, res) => {
-    mongo.retrieveTweetsWithSentiment((tweets) => {
+    mongo.countAllFeelingByMatch((tweets) => {
         res.json(tweets);
     });
 });
