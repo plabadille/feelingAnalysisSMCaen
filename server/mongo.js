@@ -31,7 +31,6 @@ const public = {
             });
         });
     },
-
     //1-2- tweets associated with sentiment:
     //------------------------------------
     retrieveTweetsWithSentiment: (callback) => {
@@ -41,10 +40,9 @@ const public = {
             privates.getParseTweets((sentimentTweets) => {
                 tweets.forEach((tweet) => {
                     for (var i = 0; i < sentimentTweets.length; i++) {
-
-                        if (sentimentTweets[i].idTweet == tweet.id) {
+                        if (sentimentTweets[i].idTweet == tweet.id_str) {
                             tweetsWithSentiment.push({
-                                id : tweet.id,
+                                id : tweet.id_str,
                                 message : tweet.text,
                                 created_time : tweet.created_at,
                                 feeling : sentimentTweets[i].label
@@ -156,7 +154,7 @@ const privates = {
     getCrawlTweetsMessages: (callback) => {
         const collection = public.db.collection('tweets'); 
 
-        collection.find( {} ,{"id":1,"text":1,"created_at":1} ).toArray((err, items) => {
+        collection.find( {} ,{"id_str":1,"text":1,"created_at":1} ).toArray((err, items) => {
             callback(items);
         });
     },
