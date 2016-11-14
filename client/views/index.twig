@@ -21,53 +21,59 @@
 			<div class="switch col s6">
 				<label>
 					Twitter
-					<input type="checkbox" name="social" value="twitter" checked="checked">
+					<input type="checkbox" name="social" value="twitter" checked="checked" id="twitterButton">
 					<span class="lever"></span>
 				</label>
 			</div>
 			<div class="switch col s6">
 				<label>
 					Facebook
-					<input type="checkbox" name="social" value="facebook" checked="checked">
+					<input type="checkbox" name="social" value="facebook" checked="checked" id="facebookButton">
 					<span class="lever"></span>
 				</label>
 			</div>
 		</div>
 		<div class="row">
 			<p class="col s6">
-				<input type="checkbox" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
-				<label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
+				<input type="checkbox" name="social" value="MHSC_SMC" class="choosenMatch" id="MHSC_SMC" checked="checked">
+				<label for="MHSC_SMC">Match MHSC / SMC</label>
 			</p>
 			<p class="col s6">
-				<input type="checkbox" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
+				<input type="checkbox" name="social" value="SMC_ASSE" class="choosenMatch" id="SMC_ASSE" checked="checked">
 				<label for="SMC_ASSE">Match SMC / ASSE</label>
 			</p>
 			<p class="col s6">
-				<input type="checkbox" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
+				<input type="checkbox" name="social" value="ASSE_SMC" class="choosenMatch" id="ASSE_SMC" checked="checked">
 				<label for="ASSE_SMC">Match ASSE / SMC</label>
 			</p>
 			<p class="col s6">
-				<input type="checkbox" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
+				<input type="checkbox" name="social" value="ASNL_SMC" class="choosenMatch" id="ASNL_SMC" checked="checked">
 				<label for="ASNL_SMC">Match ASNL / SMC</label>
 			</p>
-			<p class="col s6">
-				<input type="checkbox" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
+			<p class="col s6"> 
+				<input type="checkbox" name="social" value="SMC_OGN" class="choosenMatch" id="SMC_OGN" checked="checked">
 				<label for="SMC_OGN">Match SMC / OGN</label>
 			</p>
 		</div>
 		<div class="row">
-			<button class="btn waves-effect waves-light right" type="submit" name="action" onclick="listAllTweetsAndComments(document.getElementById('search').value)">Envoyer
+			<button class="btn waves-effect waves-light right" type="submit" name="action" id="submit">Envoyer
 				<i class="material-icons right">send</i>
 			</button>
 		</div>
 	</form>
 </div>
-<span id ="twitterHeader"></span>
-<ul class="collection" id="collectionTweets">
-</ul>
-<span id ="facebookHeader"></span>
-<ul class="collection" id="collectionComments">
-</ul>
+<div class="row">
+	<div class="col s6">
+		<span id ="twitterHeader"></span>
+		<ul class="collection" id="collectionTweets">
+		</ul>
+	</div>
+	<div class="col s6">
+		<span id ="facebookHeader"></span>
+		<ul class="collection" id="collectionComments">
+		</ul>
+	</div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -108,11 +114,9 @@
         chart.write("chartdiv");
     });
 
-	function listAllTweetsAndComments(keyWord){
-		//à passer dynamiquement via args:
-		var twitter = true;
-		var facebook = true;
+	function listAllTweetsAndComments(keyWord,twitter,facebook,matchArray){
 		//compteur de résultat:
+		console.log(matchArray);
 		let twitterFound = 0;
 		let facebookFound = 0;
 		//préparation de la request de recherche:
@@ -128,16 +132,18 @@
 		//Twitter:
 		if (twitter){
 			{% for tweet in tweets %}
-			var tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-			{% if tweet.feeling == "pos" %}
-				var feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
-			{% endif %}
-			{% if tweet.feeling == "neutral" %}
-				var feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
-			{% endif %}
-			{% if tweet.feeling == "neg" %}
-				var feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
-			{% endif %}
+			let match = {{ tweet.match }}
+			if( match in matchArray ) {
+				let tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+				{% if tweet.feeling == "pos" %}
+				let feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
+				{% endif %}
+				{% if tweet.feeling == "neutral" %}
+				let feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
+				{% endif %}
+				{% if tweet.feeling == "neg" %}
+				let feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
+				{% endif %}
 			//Recherche Twitter (avec verif des doublons):
 			for (let index in research) {
 				if (tweetMsg.toLowerCase().indexOf(research[index]) !== -1) {
@@ -163,6 +169,7 @@
 					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
 				}
 			}
+			}
 			{% endfor %}
 			//Affichage Twitter sans doublon:
 			for (let index in resultsToDisplay) {
@@ -172,24 +179,26 @@
 			//Affichage header and result Twitter:
 			if (twitterFound === 0) {
 				$("#twitterHeader").append("<h4>Tweets</h4>");
-				$("#collectionTweets").append("<li class='collection-item'>Nothing found in twitter</li>");
+				$("#collectionTweets").append("<li class='collection-item'>Aucune donnée twitter trouvée</li>");
 			} else {
-				$("#twitterHeader").append("<h4>Tweets (found "+twitterFound+" results)</h4>");
+				$("#twitterHeader").append("<h4>Tweets (Trouvé "+twitterFound+" resultats)</h4>");
 			}
 		}
 		//Facebook:
 		if (facebook) {
 			{% for comment in comments %}
-			var commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-			{% if comment.feeling == "pos" %}
-				var feelingComment ='<i class="petite material-icons right">thumb_up</i>';
-			{% endif %}
-			{% if comment.feeling == "neutral" %}
-				var feelingComment ='<i class="petite material-icons right">thumbs_up_down</i>';
-			{% endif %}
-			{% if comment.feeling == "neg" %}
-				var feelingComment ='<i class="petite material-icons right">thumb_down</i>';
-			{% endif %}
+			let match = {{ comment.match }}
+			if( match in matchArray ) {
+				let commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+				{% if comment.feeling == "pos" %}
+				let feelingComment ='<i class="petite material-icons right">thumb_up</i>';
+				{% endif %}
+				{% if comment.feeling == "neutral" %}
+				let feelingComment ='<i class="petite material-icons right">thumbs_up_down</i>';
+				{% endif %}
+				{% if comment.feeling == "neg" %}
+				let feelingComment ='<i class="petite material-icons right">thumb_down</i>';
+				{% endif %}
 			//Recherche Facebook:
 			for (let index in research) {
 				if (commentMsg.toLowerCase().indexOf(research[index]) !== -1) {
@@ -198,18 +207,50 @@
 					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
 				}
 			}
+			}
 			{% endfor %}
 			//Affichage header and result Facebook:
 			if (facebookFound === 0) {
 				$("#facebookHeader").append("<h4>Commentaires Facebook</h4>");
-				$("#collectionComments").append("<li class='collection-item'>Nothing found in Facebook</li>");
+				$("#collectionComments").append("<li class='collection-item'>Aucune donnée facebook trouvée</li>");
 			} else {
-				$("#facebookHeader").append("<h4>Commentaires Facebook (found "+facebookFound+" results)</h4>");
+				$("#facebookHeader").append("<h4>Commentaires Facebook (trouvé "+facebookFound+" resultats)</h4>");
 			}
 		}
 	}
 
 //action par default au chargement de la page:
-listAllTweetsAndComments("perdre");
+listAllTweetsAndComments("perdre",true,true);
+
+var submit = document.querySelector("#submit");
+submit.onclick = function(event) {
+	event.preventDefault();
+	console.log("Find tweets");
+    //on regarde si les boutons fb et twitter sont cochés:
+    // let facebook = document.querySelector("#twitterBouton").checked;
+    // let twitter = document.querySelector("#facebookBouton").checked;
+    // //on regarde quel match sont selectionné:
+    // let choosenMatch = document.querySelectorAll(".choosenMatch");
+    // let matchArray = [];
+    // for ( let match in choosenMatch ) {
+    //     if (choosenMatch[match].checked){
+    //         matchArray.push(choosenMatch[match].getAttribute("value"));
+    //     }
+    // }
+    // //on génére puis affiche la nouvelle chart:
+    // chartData = chartDataDynamic(facebook, twitter, matchArray);
+    // chart = makeChartDynamic();
+    let keyWord = document.getElementById('search').value;
+    let facebook = document.querySelector("#twitterButton").checked;
+    let twitter = document.querySelector("#facebookButton").checked;
+    let choosenMatch = document.querySelectorAll(".choosenMatch");
+    let matchArray = [];
+    for ( let match in choosenMatch ) {
+    	if (choosenMatch[match].checked){
+    		matchArray.push(choosenMatch[match].getAttribute("value"));
+    	}
+    }
+    listAllTweetsAndComments(keyWord,twitter,facebook,matchArray);
+}
 </script>
 {% endblock %}

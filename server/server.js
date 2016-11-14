@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
     mongo.retrieveTweetsWithSentiment((tweets) => {
         mongo.retrieveCommentsWithSentiment((comments) => {
             mongo.countAllFeelingByMatch((feelings) => {
-                res.render('indexGraph.twig', {
+                res.render('index.twig', {
                     feelings : feelings, //to delete..;
                     tweets : tweets,
                     comments : comments
@@ -33,11 +33,11 @@ app.get('/', (req, res) => {
         });
     });
 });
-app.get('/test', (req, res) => {
+app.get('/graph', (req, res) => {
     mongo.retrieveTweetsWithSentiment((tweets) => {
         mongo.retrieveCommentsWithSentiment((comments) => {
             mongo.countAllFeelingByMatch((feelings) => {
-                res.render('indexGraph2.twig', {
+                res.render('graph.twig', {
                     feelings : feelings, //to delete..;
                     tweets : tweets,
                     comments : comments

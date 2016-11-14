@@ -15,7 +15,7 @@ main {
   flex: 1 0 auto;
 }
 .row {
-  margin: 20px 25% !important;
+  margin: 20px auto !important;
 }
 nav .brand-logo {
   left:25px;
@@ -43,4 +43,8 @@ nav .nav-wrapper nav ul {
 }
 .amcharts-cursor-fill {
   filter: url(#shadow);
-} */
+}*/
+
+.footer-copyright .container a{
+  margin-right: 20px;
+}
