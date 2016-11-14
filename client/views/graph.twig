@@ -4,7 +4,7 @@
 {% block body %}
 <div class="row">
     <h2 class="header">Sentiments des supporters sur les réseaux sociaux</h2>
-<table class="bordered highlight centered responsive-table">
+<table class="bordered highlight centered">
         <thead>
           <tr>
               <th data-field="reseau">Reseau social</th>
@@ -64,12 +64,12 @@
                 <label for="SMC_ASSE">Match SMC / ASSE</label>
             </p>
             <p class="col s6">
-                <input type="checkbox" class="choosenMatch" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
-                <label for="ASSE_SMC">Match ASSE / SMC</label>
-            </p>
-            <p class="col s6">
                 <input type="checkbox" class="choosenMatch" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
                 <label for="ASNL_SMC">Match ASNL / SMC</label>
+            </p>
+            <p class="col s6">
+                <input type="checkbox" class="choosenMatch" name="social" value="ASNL_SMC2" id="ASNL_SMC2" checked="checked">
+                <label for="ASNL_SMC2">Match ASNL / SMC (CDL)</label>
             </p>
             <p class="col s6">
                 <input type="checkbox" class="choosenMatch" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
@@ -94,7 +94,7 @@ var chart;
 const feelings = {{ feelings|json_encode() }};
 
 //cas par defaut au chargement de la page:
-let matchArray = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC", "SMC_OGN"]
+let matchArray = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC2", "SMC_OGN"];
 var chartData = chartDataDynamic(true, true, matchArray);
 chart = makeChartDynamic();
 

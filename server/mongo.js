@@ -18,7 +18,7 @@ const mongoClient = require('mongodb').MongoClient;
 const matchDates = {
     SMC_ASSE : ['2016-10-22', '2016-10-23', '2016-10-24'],
     ASNL_SMC : ['2016-10-25', '2016-10-26', '2016-10-27'],
-    ASNL_SMC : ['2016-10-28', '2016-10-29', '2016-10-30'],
+    ASNL_SMC2 : ['2016-10-28', '2016-10-29', '2016-10-30'],
     SMC_OGN : ['2016-11-05', '2016-11-06', '2016-11-07']
 };
 
@@ -158,7 +158,7 @@ const public = {
                     neutral : 0
                 } 
             },
-            ASNL_SMC : {
+            ASNL_SMC2 : {
                 facebook : {
                     pos : 0,
                     neg : 0,
@@ -199,7 +199,6 @@ const public = {
         public.retrieveCommentsWithSentiment((comments) => {
             public.retrieveTweetsWithSentiment((tweets) => {
                 tweets.forEach((tweet) => {
-                    console.log(tweet.match);
                     switch (tweet.feeling) {
                         case "pos":
                             feelings[tweet.match].twitter.pos ++;
@@ -232,7 +231,6 @@ const public = {
                             break;
                     }
                 });
-                console.log(feelings);
                 callback(feelings);
             });
         });

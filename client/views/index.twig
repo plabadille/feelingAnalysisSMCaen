@@ -39,12 +39,12 @@
 				<label for="SMC_ASSE">Match SMC / ASSE</label>
 			</p>
 			<p class="col s6">
-				<input type="checkbox" name="social" value="ASSE_SMC" class="choosenMatch" id="ASSE_SMC" checked="checked">
-				<label for="ASSE_SMC">Match ASSE / SMC</label>
-			</p>
-			<p class="col s6">
 				<input type="checkbox" name="social" value="ASNL_SMC" class="choosenMatch" id="ASNL_SMC" checked="checked">
 				<label for="ASNL_SMC">Match ASNL / SMC</label>
+			</p>
+			<p class="col s6">
+				<input type="checkbox" name="social" value="ASNL_SMC2" class="choosenMatch" id="ASNL_SMC2" checked="checked">
+				<label for="ASNL_SMC2">Match ASNL / SMC (CDL)</label>
 			</p>
 			<p class="col s6"> 
 				<input type="checkbox" name="social" value="SMC_OGN" class="choosenMatch" id="SMC_OGN" checked="checked">
@@ -112,7 +112,6 @@
 
 	function listAllTweetsAndComments(keyWord,twitter,facebook,matchArray){
 		//compteur de résultat:
-		console.log(matchArray);
 		let twitterFound = 0;
 		let facebookFound = 0;
 		//préparation de la request de recherche:
@@ -128,44 +127,44 @@
 		//Twitter:
 		if (twitter){
 			{% for tweet in tweets %}
-			let match = {{ tweet.match }};
-			if( match in matchArray ) {
-				let tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-				{% if tweet.feeling == "pos" %}
-				let feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
-				{% endif %}
-				{% if tweet.feeling == "neutral" %}
-				let feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
-				{% endif %}
-				{% if tweet.feeling == "neg" %}
-				let feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
-				{% endif %}
-			//Recherche Twitter (avec verif des doublons):
-			for (let index in research) {
-				if (tweetMsg.toLowerCase().indexOf(research[index]) !== -1) {
-					if (twitterFound === 0) { //premier match
-						twitterFound++;
-						results.push(tweetMsg);
-						resultsToDisplay.push(tweetMsg+feelingTweet);
-					} else { //match à vérifier
-						let isNew = true; 
-						for (let index in results) {
-							if (tweetMsg == results[index]) {
-								isNew = false;
-								break;
+				match = "{{ tweet.match }}";
+				if( matchArray.indexOf(match) != -1 ) {
+					let tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+					{% if tweet.feeling == "pos" %}
+					let feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
+					{% endif %}
+					{% if tweet.feeling == "neutral" %}
+					let feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
+					{% endif %}
+					{% if tweet.feeling == "neg" %}
+					let feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
+					{% endif %}
+					//Recherche Twitter (avec verif des doublons):
+					for (let index in research) {
+						if (tweetMsg.toLowerCase().indexOf(research[index]) !== -1) {
+							if (twitterFound === 0) { //premier match
+								twitterFound++;
+								results.push(tweetMsg);
+								resultsToDisplay.push(tweetMsg+feelingTweet);
+							} else { //match à vérifier
+								let isNew = true; 
+								for (let index in results) {
+									if (tweetMsg == results[index]) {
+										isNew = false;
+										break;
+									}
+								}
+								if (isNew) { //pas un doublon
+									twitterFound++;
+									results.push(tweetMsg);
+									resultsToDisplay.push(tweetMsg+feelingTweet);
+								} else {
+								}
 							}
-						}
-						if (isNew) { //pas un doublon
-							twitterFound++;
-							results.push(tweetMsg);
-							resultsToDisplay.push(tweetMsg+feelingTweet);
-						} else {
+							break; //Si au moins une occurence du terme de recherche est trouvé on affiche
 						}
 					}
-					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
 				}
-			}
-			}
 			{% endfor %}
 			//Affichage Twitter sans doublon:
 			for (let index in resultsToDisplay) {
@@ -183,8 +182,8 @@
 		//Facebook:
 		if (facebook) {
 			{% for comment in comments %}
-			let match = {{ comment.match }}
-			if( match in matchArray ) {
+			match = "{{ comment.match }}";
+			if( matchArray.indexOf(match) != -1 ) {
 				let commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
 				{% if comment.feeling == "pos" %}
 				let feelingComment ='<i class="petite material-icons right">thumb_up</i>';
@@ -215,38 +214,25 @@
 		}
 	}
 
-//action par default au chargement de la page:
-listAllTweetsAndComments("perdre",true,true);
+	let matchDefault = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC2", "SMC_OGN"];
+	//action par default au chargement de la page:
+	listAllTweetsAndComments("perdre",true,true, matchDefault);
 
-var submit = document.querySelector("#submit");
-submit.onclick = function(event) {
-	event.preventDefault();
-	console.log("Find tweets");
-    //on regarde si les boutons fb et twitter sont cochés:
-    // let facebook = document.querySelector("#twitterBouton").checked;
-    // let twitter = document.querySelector("#facebookBouton").checked;
-    // //on regarde quel match sont selectionné:
-    // let choosenMatch = document.querySelectorAll(".choosenMatch");
-    // let matchArray = [];
-    // for ( let match in choosenMatch ) {
-    //     if (choosenMatch[match].checked){
-    //         matchArray.push(choosenMatch[match].getAttribute("value"));
-    //     }
-    // }
-    // //on génére puis affiche la nouvelle chart:
-    // chartData = chartDataDynamic(facebook, twitter, matchArray);
-    // chart = makeChartDynamic();
-    let keyWord = document.getElementById('search').value;
-    let facebook = document.querySelector("#twitterButton").checked;
-    let twitter = document.querySelector("#facebookButton").checked;
-    let choosenMatch = document.querySelectorAll(".choosenMatch");
-    let matchArray = [];
-    for ( let match in choosenMatch ) {
-    	if (choosenMatch[match].checked){
-    		matchArray.push(choosenMatch[match].getAttribute("value"));
-    	}
-    }
-    listAllTweetsAndComments(keyWord,twitter,facebook,matchArray);
-}
+	var submit = document.querySelector("#submit");
+	submit.onclick = function(event) {
+		event.preventDefault();
+	    let keyWord = document.getElementById('search').value;
+	    let facebook = document.querySelector("#twitterButton").checked;
+	    let twitter = document.querySelector("#facebookButton").checked;
+	    let choosenMatch = document.querySelectorAll(".choosenMatch");
+	    let matchArray = [];
+
+	    for ( let match in choosenMatch ) {
+	    	if (choosenMatch[match].checked){
+	    		matchArray.push(choosenMatch[match].getAttribute("value"));
+	    	}
+	    }
+	    listAllTweetsAndComments(keyWord,twitter,facebook,matchArray);
+	}
 </script>
 {% endblock %}
