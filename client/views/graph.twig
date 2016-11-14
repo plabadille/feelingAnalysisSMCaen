@@ -1,7 +1,44 @@
 {% extends 'base.twig' %}
-{% block title %}Index{% endblock %}
+{% block title %}Sentiments par match{% endblock %}
 
 {% block body %}
+<div class="row">
+    <h2 class="header">Sentiments des supporters sur les réseaux sociaux</h2>
+<table class="bordered highlight centered responsive-table">
+        <thead>
+          <tr>
+              <th data-field="reseau">Reseau social</th>
+              <th data-field="pos">Positif</th>
+              <th data-field="neutral">Neutre</th>
+              <th data-field="neg">Negatif</th>
+              <th data-field="all">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Twitter</td>
+            <td>{{ feelings.ALL.twitter.pos }}</td>
+            <td>{{ feelings.ALL.twitter.neutral }}</td>
+            <td>{{ feelings.ALL.twitter.neg }}</td>
+            <td>{{ feelings.ALL.twitter.pos + feelings.ALL.twitter.neutral + feelings.ALL.twitter.neg }}</td>
+          </tr>
+          <tr>
+            <td>Facebook</td>
+            <td>{{ feelings.ALL.facebook.pos }}</td>
+            <td>{{ feelings.ALL.facebook.neutral }}</td>
+            <td>{{ feelings.ALL.facebook.neg }}</td>
+            <td>{{ feelings.ALL.facebook.pos + feelings.ALL.facebook.neutral + feelings.ALL.facebook.neg }}</td>
+          </tr>
+          <tr>
+            <td>Tous</td>
+            <td>{{ feelings.ALL.twitter.pos + feelings.ALL.facebook.pos }}</td>
+            <td>{{ feelings.ALL.twitter.neutral + feelings.ALL.facebook.neutral }}</td>
+            <td>{{ feelings.ALL.twitter.neg + feelings.ALL.facebook.neg }}</td>
+            <td>{{ feelings.ALL.twitter.pos + feelings.ALL.twitter.neutral + feelings.ALL.twitter.neg + feelings.ALL.facebook.pos + feelings.ALL.facebook.neutral + feelings.ALL.facebook.neg }}</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
 <div class="row">
     <h2 class="header">Filtres possibles:</h2>
     <form class="col s12">
