@@ -219,10 +219,7 @@
 		}
 	}
 
-	//let matchDefault = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC2", "SMC_OGN"];
-	//action par default au chargement de la page:
-	//listAllTweetsAndComments("perdre",true,true, matchDefault);
-
+	//prevent click on submit and change data
 	var submit = document.querySelector("#submit");
 	submit.onclick = function(event) {
 		event.preventDefault();
@@ -239,5 +236,27 @@
 	    }
 	    listAllTweetsAndComments(keyWord,twitter,facebook,matchArray);
 	}
+
+	//prevent press enter on search field and change data
+	$("#search").on('keydown', function (event) {
+	    if (event.keyCode == 13) {
+	    	event.preventDefault();
+	    	console.log("toto");
+		    let keyWord = document.getElementById('search').value;
+		    let facebook = document.querySelector("#twitterButton").checked;
+		    let twitter = document.querySelector("#facebookButton").checked;
+		    let choosenMatch = document.querySelectorAll(".choosenMatch");
+		    let matchArray = [];
+
+		    for ( let match in choosenMatch ) {
+		    	if (choosenMatch[match].checked){
+		    		matchArray.push(choosenMatch[match].getAttribute("value"));
+		    	}
+		    }
+		    listAllTweetsAndComments(keyWord,twitter,facebook,matchArray);
+	    }
+	});
+
+
 </script>
 {% endblock %}
