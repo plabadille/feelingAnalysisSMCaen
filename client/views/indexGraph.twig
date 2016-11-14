@@ -1,73 +1,75 @@
 {% extends 'base.twig' %}
 {% block title %}Index{% endblock %}
-	        {% block body %}
-	        <div id="chartdiv"></div>
-	        <div class="row">
-	        	<form class="col s12">
-	        		<div class="row">
-	        			<nav>
-	        				<div class="nav-wrapper col s12">
-	        					<form>
-	        						<div class="input-field">
-	        							<input id="search" type="search" required>
-	        							<label for="search"><i class="material-icons">search</i></label>
-	        							<i class="material-icons">close</i>
-	        						</div>
-	        					</form>
-	        				</div>
-	        			</nav>
-	        		</div>
-	        		<div class="row">
-	        			<div class="switch col s6">
-	        				<label>
-	        					Twitter
-	        					<input type="checkbox" name="social" value="twitter" checked="checked">
-	        					<span class="lever"></span>
-	        				</label>
-	        			</div>
-	        			<div class="switch col s6">
-	        				<label>
-	        					Facebook
-	        					<input type="checkbox" name="social" value="facebook" checked="checked">
-	        					<span class="lever"></span>
-	        				</label>
-	        			</div>
-	        		</div>
-	        		<div class="row">
-	        			<p class="col s6">
-	        				<input type="checkbox" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
-	        				<label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
-	        			</p>
-	        			<p class="col s6">
-	        				<input type="checkbox" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
-	        				<label for="SMC_ASSE">Match SMC / ASSE</label>
-	        			</p>
-	        			<p class="col s6">
-	        				<input type="checkbox" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
-	        				<label for="ASSE_SMC">Match ASSE / SMC</label>
-	        			</p>
-	        			<p class="col s6">
-	        				<input type="checkbox" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
-	        				<label for="ASNL_SMC">Match ASNL / SMC</label>
-	        			</p>
-	        			<p class="col s6">
-	        				<input type="checkbox" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
-	        				<label for="SMC_OGN">Match SMC / OGN</label>
-	        			</p>
-	        		</div>
-	        		<div class="row">
-	        			<button class="btn waves-effect waves-light right" type="submit" name="action" onclick="listAllTweetsAndComments(document.getElementById('search').value)">Envoyer
-	        				<i class="material-icons right">send</i>
-	        			</button>
-	        		</div>
-	        	</form>
-	        </div>
-	        <ul class="collection" id="collectionTweets">
-	        </ul>
-	        <ul class="collection" id="collectionComments">
-	        </ul>
-	        
-	        {% endblock %}
+{% block body %}
+<div id="chartdiv"></div>
+<div class="row">
+	<form class="col s12">
+		<div class="row">
+			<nav>
+				<div class="nav-wrapper col s12">
+					<form>
+						<div class="input-field">
+							<input id="search" type="search" required>
+							<label for="search"><i class="material-icons">search</i></label>
+							<i class="material-icons">close</i>
+						</div>
+					</form>
+				</div>
+			</nav>
+		</div>
+		<div class="row">
+			<div class="switch col s6">
+				<label>
+					Twitter
+					<input type="checkbox" name="social" value="twitter" checked="checked">
+					<span class="lever"></span>
+				</label>
+			</div>
+			<div class="switch col s6">
+				<label>
+					Facebook
+					<input type="checkbox" name="social" value="facebook" checked="checked">
+					<span class="lever"></span>
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<p class="col s6">
+				<input type="checkbox" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
+				<label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
+			</p>
+			<p class="col s6">
+				<input type="checkbox" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
+				<label for="SMC_ASSE">Match SMC / ASSE</label>
+			</p>
+			<p class="col s6">
+				<input type="checkbox" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
+				<label for="ASSE_SMC">Match ASSE / SMC</label>
+			</p>
+			<p class="col s6">
+				<input type="checkbox" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
+				<label for="ASNL_SMC">Match ASNL / SMC</label>
+			</p>
+			<p class="col s6">
+				<input type="checkbox" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
+				<label for="SMC_OGN">Match SMC / OGN</label>
+			</p>
+		</div>
+		<div class="row">
+			<button class="btn waves-effect waves-light right" type="submit" name="action" onclick="listAllTweetsAndComments(document.getElementById('search').value)">Envoyer
+				<i class="material-icons right">send</i>
+			</button>
+		</div>
+	</form>
+</div>
+<span id ="twitterHeader"></span>
+<ul class="collection" id="collectionTweets">
+</ul>
+<span id ="facebookHeader"></span>
+<ul class="collection" id="collectionComments">
+</ul>
+{% endblock %}
+
 {% block javascripts %}
 <script>
 	var chart;
@@ -89,63 +91,125 @@
 	];
 
 	AmCharts.ready(function () {
-	                // PIE CHART
-	                chart = new AmCharts.AmPieChart();
-	                chart.dataProvider = chartData;
-	                chart.titleField = "sentiment";
-	                chart.valueField = "value";
-	                chart.outlineColor = "#FFFFFF";
-	                chart.outlineAlpha = 0.8;
-	                chart.outlineThickness = 2;
-	                chart.balloonText = "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>";
-	                // this makes the chart 3D
-	                chart.depth3D = 15;
-	                chart.angle = 30;
+        // PIE CHART
+        chart = new AmCharts.AmPieChart();
+        chart.dataProvider = chartData;
+        chart.titleField = "sentiment";
+        chart.valueField = "value";
+        chart.outlineColor = "#FFFFFF";
+        chart.outlineAlpha = 0.8;
+        chart.outlineThickness = 2;
+        chart.balloonText = "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>";
+        // this makes the chart 3D
+        chart.depth3D = 15;
+        chart.angle = 30;
 
-	                // WRITE
-	                chart.write("chartdiv");
-	            });
-	        </script>
-	        <script>
-	        	function listAllTweetsAndComments(keyWord){
-	        		var twitter = true;
-	        		var facebook = true;
-	        		$("#collectionTweets").empty();
-	        		$("#collectionTweets").append("<li class='collection-header'><h4>Tweets</h4></li>");
-	        		{% for tweet in tweets %}
-	        		var tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-	        		{% if tweet.feeling == "pos" %}
-						var feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
-					{% endif %}
-					{% if tweet.feeling == "neutral" %}
-						var feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
-					{% endif %}
-					{% if tweet.feeling == "neg" %}
-						var feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
-					{% endif %}
-					if(tweetMsg.indexOf(keyWord) !== -1) {
-						$("#collectionTweets").append("<li class='collection-item'>"+tweetMsg+feelingTweet+"</li>");
+        // WRITE
+        chart.write("chartdiv");
+    });
+
+	function listAllTweetsAndComments(keyWord){
+		//à passer dynamiquement via args:
+		var twitter = true;
+		var facebook = true;
+		//compteur de résultat:
+		let twitterFound = 0;
+		let facebookFound = 0;
+		//préparation de la request de recherche:
+		let research = keyWord.toLowerCase().split(" ");
+		let results = [];
+		let resultsToDisplay = [];
+		//Nettoyage du contenu à chaque requête:
+		$("#collectionTweets").empty();
+		$("#twitterHeader").empty();
+		$("#collectionComments").empty();
+		$("#facebookHeader").empty();
+
+		//Twitter:
+		if (twitter){
+			{% for tweet in tweets %}
+			var tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+			{% if tweet.feeling == "pos" %}
+				var feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
+			{% endif %}
+			{% if tweet.feeling == "neutral" %}
+				var feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
+			{% endif %}
+			{% if tweet.feeling == "neg" %}
+				var feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
+			{% endif %}
+			//Recherche Twitter (avec verif des doublons):
+			for (let index in research) {
+				if (tweetMsg.toLowerCase().indexOf(research[index]) !== -1) {
+					if (twitterFound === 0) { //premier match
+						twitterFound++;
+						results.push(tweetMsg);
+						resultsToDisplay.push(tweetMsg+feelingTweet);
+					} else { //match à vérifier
+						let isNew = true; 
+						for (let index in results) {
+							if (tweetMsg == results[index]) {
+								isNew = false;
+								break;
+							}
+						}
+						if (isNew) { //pas un doublon
+							twitterFound++;
+							results.push(tweetMsg);
+							resultsToDisplay.push(tweetMsg+feelingTweet);
+						} else {
+						}
 					}
-	        		{% endfor %}
-	        		$("#collectionComments").append("<li class='collection-header'><h4>Commentaires Facebook</h4></li>");
-	        		{% for comment in comments %}
-	        		var commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-	        		{% if comment.feeling == "pos" %}
-						var feelingComment ='<i class="petite material-icons right">thumb_up</i>';
-					{% endif %}
-					{% if comment.feeling == "neutral" %}
-						var feelingComment ='<i class="petite material-icons right">thumbs_up_down</i>';
-					{% endif %}
-					{% if comment.feeling == "neg" %}
-						var feelingComment ='<i class="petite material-icons right">thumb_down</i>';
-					{% endif %}
-					if(commentMsg.indexOf(keyWord) !== -1) {
-						$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment+"</li>");
-					}
-	        		{% endfor %}
-	        	}
-	        	window.onload = function(){
-	        		listAllTweetsAndComments("perdre");
-	        	};
-	        </script>
-	        {% endblock %}
+					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
+				}
+			}
+			{% endfor %}
+			//Affichage Twitter sans doublon:
+			for (let index in resultsToDisplay) {
+				$("#collectionTweets").append("<li class='collection-item'>"+resultsToDisplay[index]+"</li>");
+			}
+
+			//Affichage header and result Twitter:
+			if (twitterFound === 0) {
+				$("#twitterHeader").append("<h4>Tweets</h4>");
+				$("#collectionTweets").append("<li class='collection-item'>Nothing found in twitter</li>");
+			} else {
+				$("#twitterHeader").append("<h4>Tweets (found "+twitterFound+" results)</h4>");
+			}
+		}
+		//Facebook:
+		if (facebook) {
+			{% for comment in comments %}
+			var commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+			{% if comment.feeling == "pos" %}
+				var feelingComment ='<i class="petite material-icons right">thumb_up</i>';
+			{% endif %}
+			{% if comment.feeling == "neutral" %}
+				var feelingComment ='<i class="petite material-icons right">thumbs_up_down</i>';
+			{% endif %}
+			{% if comment.feeling == "neg" %}
+				var feelingComment ='<i class="petite material-icons right">thumb_down</i>';
+			{% endif %}
+			//Recherche Facebook:
+			for (let index in research) {
+				if (commentMsg.toLowerCase().indexOf(research[index]) !== -1) {
+					facebookFound++;
+					$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment+"</li>");
+					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
+				}
+			}
+			{% endfor %}
+			//Affichage header and result Facebook:
+			if (facebookFound === 0) {
+				$("#facebookHeader").append("<h4>Commentaires Facebook</h4>");
+				$("#collectionComments").append("<li class='collection-item'>Nothing found in Facebook</li>");
+			} else {
+				$("#facebookHeader").append("<h4>Commentaires Facebook (found "+facebookFound+" results)</h4>");
+			}
+		}
+	}
+
+//action par default au chargement de la page:
+listAllTweetsAndComments("perdre");
+</script>
+{% endblock %}
