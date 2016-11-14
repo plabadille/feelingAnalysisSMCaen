@@ -4,6 +4,8 @@ The analysis is focused on suporter feeling of the soccer team Stade Malherbe de
 
 It's a group project involving Lénaïc Couellan and Pierre Labadille, students in M2-DNR2i from the University of Caen.
 
+![](media/screenshot.png)
+
 ## Installing
 
 Clone the repository (localy or in node server)
@@ -24,6 +26,8 @@ sudo ./installDependencies.sh
 
 Fill the database with the dump directory.
 
+Unzip dump.tar.gz.
+
 ```
 mongorestore --host localhost --port 37017 --db yourDatabase dump/
 ```
@@ -41,6 +45,8 @@ node server.js
 
 * [`NodeJs`](https://nodejs.org)
 * [`MongoDb`](https://www.mongodb.com/fr)
+* [`Amcharts`](https://www.amcharts.com/)
+* [`Materialize`](http://materializecss.com/)
 
 ## License
 
