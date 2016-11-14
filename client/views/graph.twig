@@ -3,7 +3,7 @@
 
 {% block body %}
 <div class="row">
-    <h2>Filtres possibles:</h2>
+    <h2 class="header">Filtres possibles:</h2>
     <form class="col s12">
         <div class="row">
             <div class="switch col s6">
@@ -22,23 +22,19 @@
             </div>
         </div>
         <div class="row">
-            <p>
-                <input type="checkbox" class="choosenMatch" name="social" value="MHSC_SMC" id="MHSC_SMC" checked="checked">
-                <label for="MHSC_SMC">Match MHSC / SMC_ASSE</label>
-            </p>
-            <p>
+            <p class="col s6">
                 <input type="checkbox" class="choosenMatch" name="social" value="SMC_ASSE" id="SMC_ASSE" checked="checked">
                 <label for="SMC_ASSE">Match SMC / ASSE</label>
             </p>
-            <p>
+            <p class="col s6">
                 <input type="checkbox" class="choosenMatch" name="social" value="ASSE_SMC" id="ASSE_SMC" checked="checked">
                 <label for="ASSE_SMC">Match ASSE / SMC</label>
             </p>
-            <p>
+            <p class="col s6">
                 <input type="checkbox" class="choosenMatch" name="social" value="ASNL_SMC" id="ASNL_SMC" checked="checked">
                 <label for="ASNL_SMC">Match ASNL / SMC</label>
             </p>
-            <p>
+            <p class="col s6">
                 <input type="checkbox" class="choosenMatch" name="social" value="SMC_OGN" id="SMC_OGN" checked="checked">
                 <label for="SMC_OGN">Match SMC / OGN</label>
             </p>
@@ -61,7 +57,7 @@ var chart;
 const feelings = {{ feelings|json_encode() }};
 
 //cas par defaut au chargement de la page:
-let matchArray = ["MHSC_SMC", "SMC_ASSE", "ASSE_SMC", "ASNL_SMC", "SMC_OGN"]
+let matchArray = ["SMC_ASSE", "ASSE_SMC", "ASNL_SMC", "SMC_OGN"]
 var chartData = chartDataDynamic(true, true, matchArray);
 chart = makeChartDynamic();
 

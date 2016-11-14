@@ -10,7 +10,18 @@ body {
   min-height: 100vh;
   flex-direction: column;
 }
-
+.header {
+  box-sizing: border-box;
+  color: rgb(238, 110, 115);
+  font-family: "Roboto",sans-serif;
+  font-size: 53.4px;
+  font-weight: 300;
+  line-height: 58.7333px;
+  margin-bottom: 21.3667px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 26.7px;
+}
 main {
   flex: 1 0 auto;
 }

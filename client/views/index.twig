@@ -35,10 +35,6 @@
 		</div>
 		<div class="row">
 			<p class="col s6">
-				<input type="checkbox" name="social" value="MHSC_SMC" class="choosenMatch" id="MHSC_SMC" checked="checked">
-				<label for="MHSC_SMC">Match MHSC / SMC</label>
-			</p>
-			<p class="col s6">
 				<input type="checkbox" name="social" value="SMC_ASSE" class="choosenMatch" id="SMC_ASSE" checked="checked">
 				<label for="SMC_ASSE">Match SMC / ASSE</label>
 			</p>
@@ -64,7 +60,7 @@
 </div>
 <div class="row">
 	<div class="col s6">
-		<span id ="twitterHeader"></span>
+		<h2 class="header" id ="twitterHeader"></h2>
 		<ul class="collection" id="collectionTweets">
 		</ul>
 	</div>
@@ -132,7 +128,7 @@
 		//Twitter:
 		if (twitter){
 			{% for tweet in tweets %}
-			let match = {{ tweet.match }}
+			let match = {{ tweet.match }};
 			if( match in matchArray ) {
 				let tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
 				{% if tweet.feeling == "pos" %}
