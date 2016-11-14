@@ -77,22 +77,44 @@
 	var chart;
 	var legend;
 
+	//cas par default du pie chart:
 	var chartData = [
-	{
-		"sentiment": "Positif",
-		"value": {{ feelings.ALL.twitter.pos +  feelings.ALL.facebook.pos }}
-	},
-	{
-		"sentiment": "Neutre",
-		"value": {{ feelings.ALL.twitter.neutral +  feelings.ALL.facebook.neutral }}
-	},
-	{
-		"sentiment": "Négatif",
-		"value": {{ feelings.ALL.twitter.neg +  feelings.ALL.facebook.neg }}
-	},
+		{
+			"sentiment": "Positif",
+			"value": {{ feelings.ALL.twitter.pos +  feelings.ALL.facebook.pos }}
+		},
+		{
+			"sentiment": "Neutre",
+			"value": {{ feelings.ALL.twitter.neutral +  feelings.ALL.facebook.neutral }}
+		},
+		{
+			"sentiment": "Négatif",
+			"value": {{ feelings.ALL.twitter.neg +  feelings.ALL.facebook.neg }}
+		},
 	];
+	displayPieChart(chartData);
 
-	AmCharts.ready(function () {
+	//cas dynamique: (fonction appelé dans la fonction d'affichage des posts&tweets qui se charge du comptage)
+	function displayDynamicPieChart(chartData) {
+		chartData = [
+			{
+			"sentiment": "Positif",
+			"value": chartData.facebookPos + chartData.twitterPos
+			},
+			{
+				"sentiment": "Neutre",
+				"value": chartData.facebookNeutral + chartData.twitterNeutral
+			},
+			{
+				"sentiment": "Négatif",
+				"value": chartData.facebookNeg + chartData.twitterNeg
+			},
+		];
+		displayPieChart(chartData);
+	}
+
+	// AmCharts.ready(function () {
+	function displayPieChart(chartData) {
         // PIE CHART
         chart = new AmCharts.AmPieChart();
         chart.dataProvider = chartData;
@@ -108,7 +130,8 @@
 
         // WRITE
         chart.write("chartdiv");
-    });
+    }
+    // });
 
 	function listAllTweetsAndComments(keyWord,twitter,facebook,matchArray){
 		//compteur de résultat:
@@ -118,6 +141,15 @@
 		let research = keyWord.toLowerCase().split(" ");
 		let results = [];
 		let resultsToDisplay = [];
+		//comptage pour le nouveau pieChart:
+		let chartData = {
+			twitterPos : 0,
+			twitterNeg : 0,
+			twitterNeutral : 0,
+			facebookPos : 0,
+			facebookNeg : 0,
+			facebookNeutral : 0
+		}
 		//Nettoyage du contenu à chaque requête:
 		$("#collectionTweets").empty();
 		$("#twitterHeader").empty();
@@ -144,6 +176,18 @@
 					//Recherche Twitter (avec verif des doublons):
 					for (let index in research) {
 						if (tweetMsg.toLowerCase().indexOf(research[index]) !== -1) {
+							//on compte pour actualiser la pieChart:
+							switch("{{ tweet.feeling }}"){
+								case "pos":
+									chartData.twitterPos++;
+									break;
+								case "neg":
+									chartData.twitterNeg++;
+									break;
+								case "neutral":
+									chartData.twitterNeutral++;
+									break;
+							}
 							if (twitterFound === 0) { //premier match
 								twitterFound++;
 								results.push(tweetMsg);
@@ -202,6 +246,18 @@
 			//Recherche Facebook:
 			for (let index in research) {
 				if (commentMsg.toLowerCase().indexOf(research[index]) !== -1) {
+					//on compte pour actualiser la pieChart
+					switch("{{ comment.feeling }}"){
+						case "pos":
+							chartData.facebookPos++;
+							break;
+						case "neg":
+							chartData.facebookNeg++;
+							break;
+						case "neutral":
+							chartData.facebookNeutral++;
+							break;
+					}
 					facebookFound++;
 					$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment + tweetMatch + createdTime+"</li>");
 					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
@@ -217,6 +273,7 @@
 				$("#facebookHeader").append("<h4>Commentaires Facebook (trouvé "+facebookFound+" resultats)</h4>");
 			}
 		}
+		displayDynamicPieChart(chartData);
 	}
 
 	//prevent click on submit and change data
