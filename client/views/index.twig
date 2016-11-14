@@ -65,7 +65,7 @@
 		</ul>
 	</div>
 	<div class="col s6">
-		<span id ="facebookHeader"></span>
+		<h2 class="header" id ="facebookHeader"></h2>
 		<ul class="collection" id="collectionComments">
 		</ul>
 	</div>
@@ -130,6 +130,8 @@
 				match = "{{ tweet.match }}";
 				if( matchArray.indexOf(match) != -1 ) {
 					let tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+					let tweetMatch = '<br/>{{ tweet.match }}';
+					let createdTime = "<br/>" + '{{ tweet.created_time }}'.split(" ")[0] + " " + '{{ tweet.created_time }}'.split(" ")[2]+ " " + '{{ tweet.created_time }}'.split(" ")[1]+ " " + '{{ tweet.created_time }}'.split(" ")[5] + " "+ '{{ tweet.created_time }}'.split(" ")[3];
 					{% if tweet.feeling == "pos" %}
 					let feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
 					{% endif %}
@@ -145,7 +147,7 @@
 							if (twitterFound === 0) { //premier match
 								twitterFound++;
 								results.push(tweetMsg);
-								resultsToDisplay.push(tweetMsg+feelingTweet);
+								resultsToDisplay.push(tweetMsg + feelingTweet + tweetMatch + createdTime);
 							} else { //match à vérifier
 								let isNew = true; 
 								for (let index in results) {
@@ -157,7 +159,7 @@
 								if (isNew) { //pas un doublon
 									twitterFound++;
 									results.push(tweetMsg);
-									resultsToDisplay.push(tweetMsg+feelingTweet);
+									resultsToDisplay.push(tweetMsg+feelingTweet + tweetMatch + createdTime);
 								} else {
 								}
 							}
@@ -185,6 +187,9 @@
 			match = "{{ comment.match }}";
 			if( matchArray.indexOf(match) != -1 ) {
 				let commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
+				let tweetMatch = '<br/>{{ tweet.match }}';
+				let createdTime = '{{ tweet.created_time }}';
+
 				{% if comment.feeling == "pos" %}
 				let feelingComment ='<i class="petite material-icons right">thumb_up</i>';
 				{% endif %}
@@ -198,7 +203,7 @@
 			for (let index in research) {
 				if (commentMsg.toLowerCase().indexOf(research[index]) !== -1) {
 					facebookFound++;
-					$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment+"</li>");
+					$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment + tweetMatch + createdTime+"</li>");
 					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
 				}
 			}
@@ -214,9 +219,9 @@
 		}
 	}
 
-	let matchDefault = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC2", "SMC_OGN"];
+	//let matchDefault = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC2", "SMC_OGN"];
 	//action par default au chargement de la page:
-	listAllTweetsAndComments("perdre",true,true, matchDefault);
+	//listAllTweetsAndComments("perdre",true,true, matchDefault);
 
 	var submit = document.querySelector("#submit");
 	submit.onclick = function(event) {

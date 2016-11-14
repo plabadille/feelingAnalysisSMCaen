@@ -41,6 +41,9 @@ nav .nav-wrapper nav ul {
   margin-right: auto;
   margin-top: 15px;
 }
+.collection .collection-item {
+  min-width: 400px;
+}
 
 /* .amcharts-graph-g1 .amcharts-graph-fill {
   filter: url(#blur);
