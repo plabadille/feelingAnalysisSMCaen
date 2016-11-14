@@ -57,7 +57,7 @@ var chart;
 const feelings = {{ feelings|json_encode() }};
 
 //cas par defaut au chargement de la page:
-let matchArray = ["SMC_ASSE", "ASSE_SMC", "ASNL_SMC", "SMC_OGN"]
+let matchArray = ["SMC_ASSE", "ASNL_SMC", "ASNL_SMC", "SMC_OGN"]
 var chartData = chartDataDynamic(true, true, matchArray);
 chart = makeChartDynamic();
 

@@ -15,6 +15,13 @@ const mongoClient = require('mongodb').MongoClient;
 //------------------------------------
 //1- Global function (module.exports)
 //------------------------------------
+const matchDates = {
+    SMC_ASSE : ['2016-10-22', '2016-10-23', '2016-10-24'],
+    ASNL_SMC : ['2016-10-25', '2016-10-26', '2016-10-27'],
+    ASNL_SMC : ['2016-10-28', '2016-10-29', '2016-10-30'],
+    SMC_OGN : ['2016-11-05', '2016-11-06', '2016-11-07']
+};
+
 const public = {
     //1-1- connexion to MongoDb:
     //------------------------------------
@@ -39,17 +46,41 @@ const public = {
         privates.getCrawlTweetsMessages((tweets) => {
             privates.getParseTweets((sentimentTweets) => {
                 tweets.forEach((tweet) => {
-                    for (var i = 0; i < sentimentTweets.length; i++) {
+                    let tweetToReturn = {
+                        id : null,
+                        message : null,
+                        created_time : null,
+                        feeling : null,
+                        match : null
+                    }
+                    for (let i = 0; i < sentimentTweets.length; i++) {
                         if (sentimentTweets[i].idTweet == tweet.id_str) {
-                            tweetsWithSentiment.push({
-                                id : tweet.id_str,
-                                message : tweet.text,
-                                created_time : tweet.created_at,
-                                feeling : sentimentTweets[i].label
-                            });
+                            tweetToReturn["id"] = tweet.id_str;
+                            tweetToReturn["message"] = tweet.text;
+                            tweetToReturn["created_time"] = tweet.created_at;
+                            tweetToReturn["feeling"] = sentimentTweets[i].label;
                             break;
                         }
                     }
+                    for (let match in matchDates) {
+                        matchDates[match].forEach((date, index) => {
+                            //boucle twitter:
+                            let explodeDate = tweet.created_at.split(" ");
+                            if (explodeDate[1] == "Oct") {
+                                var month = "10";
+                            } else { // explode == Nov <-- valable uniquement pour notre bd. transformer en switch sinon
+                                var month = "11";
+                            }
+                            let dateTmp = explodeDate[5] + "-" + month + "-" + explodeDate[2];
+                            if (date == dateTmp) {
+                                tweetToReturn["match"] = match;
+                            }
+                        });
+                    }
+                    if (tweetToReturn["feeling"] != null && tweetToReturn["match"] != null) { //solve async issue
+                        tweetsWithSentiment.push(tweetToReturn);
+                    }
+
                 });
                 callback(tweetsWithSentiment);
             });
@@ -63,18 +94,37 @@ const public = {
         privates.getCrawlPostsMessages((posts) => {
             privates.getParsePosts((sentimentPosts) => {
                 posts.forEach((post) => {
-                    post.comments.data.forEach((comment, index) => {
-                        sentimentPosts.forEach((sentimentPost) => {
-                            if (sentimentPost.idComment == comment.id) {
-                                postsWithSentiment.push({
-                                    id : comment.id,
-                                    message : comment.message,
-                                    created_time : comment.created_time,
-                                    like_count : comment.like_count,
-                                    feeling : sentimentPost.label
-                                });
+                    post.comments.data.forEach((comment) => {
+                        let commentToReturn = {
+                            id : null,
+                            message : null,
+                            created_time : null,
+                            like_count : null,
+                            feeling : null,
+                            match : null
+                        }
+                        commentToReturn["id"] = comment.id;
+                        commentToReturn["message"] = comment.message;
+                        commentToReturn["created_time"] = comment.created_time;
+                        commentToReturn["like_count"] = comment.like_count;
+                        for (let i = 0; i < sentimentPosts.length; i++) {
+                            if (sentimentPosts[i].idComment == comment.id) {
+                                commentToReturn["feeling"] = sentimentPosts[i].label;
+                                break;
                             }
-                        });
+                        }
+                        for (let match in matchDates) {
+                            matchDates[match].forEach((date, index) => {
+                                //boucle twitter:
+                                let dateTmp = comment.created_time.split("T")[0];
+                                if (date == dateTmp) {
+                                    commentToReturn["match"] = match;
+                                }
+                            });
+                        }
+                        if (commentToReturn["feeling"] != null && commentToReturn["match"] != null) {//solve async issue
+                            postsWithSentiment.push(commentToReturn);
+                        }  
                     });
                 });
                 callback(postsWithSentiment);
@@ -84,18 +134,6 @@ const public = {
     //4-agregate parse date by date:
     countAllFeelingByMatch: (callback) => {
         const feelings = {
-            MHSC_SMC : {
-                facebook : {
-                    pos : 0,
-                    neg : 0,
-                    neutral : 0
-                },
-                twitter : {
-                    pos : 0,
-                    neg : 0,
-                    neutral : 0
-                } 
-            },
             SMC_ASSE : {
                 facebook : {
                     pos : 0,
@@ -108,7 +146,7 @@ const public = {
                     neutral : 0
                 } 
             },
-            ASSE_SMC : {
+            ASNL_SMC : {
                 facebook : {
                     pos : 0,
                     neg : 0,
@@ -158,67 +196,43 @@ const public = {
             }
         };
 
-        var matchDates = {
-            MHSC_SMC : ['2016-10-14', '2016-10-15', '2016-10-16'],
-            SMC_ASSE : ['2016-10-22', '2016-10-23', '2016-10-24'],
-            ASSE_SMC : ['2016-10-25', '2016-10-26', '2016-10-27'],
-            ASNL_SMC : ['2016-10-28', '2016-10-29', '2016-10-30'],
-            SMC_OGN : ['2016-11-05', '2016-11-06', '2016-11-07']
-        };
-
         public.retrieveCommentsWithSentiment((comments) => {
             public.retrieveTweetsWithSentiment((tweets) => {
-                for (var match in matchDates) {
-                    matchDates[match].forEach((date, index) => {
-                        //boucle twitter:
-                        tweets.forEach((tweet) => {
-                            let explodeDate = tweet.created_time.split(" ");
-                            if (explodeDate[1] == "Oct") {
-                                var month = "10";
-                            } else { // explode == Nov <-- valable uniquement pour notre bd. transformer en switch sinon
-                                var month = "11";
-                            }
-                            //Sun Oct 30 12:50:40 +0000 2016 (exemple format date twitter)
-                            let dateTmp = explodeDate[5] + "-" + month + "-" + explodeDate[2];
-                            if (date == dateTmp) {
-                                switch (tweet.feeling) {
-                                        case "pos":
-                                            feelings[match].twitter.pos ++;
-                                            feelings.ALL.twitter.pos ++;
-                                            break;
-                                        case "neg":
-                                            feelings[match].twitter.neg ++;
-                                            feelings.ALL.twitter.neg ++;
-                                            break;
-                                        case "neutral":
-                                            feelings[match].twitter.neutral ++;
-                                            feelings.ALL.twitter.neutral ++;
-                                            break;
-                                }
-                            }
-                        });
-                        //boucle facebook:
-                        comments.forEach((comment) => {
-                            let dateTmp = comment.created_time.split("T")[0];
-                            if (date == dateTmp) {
-                                switch (comment.feeling) {
-                                    case "pos":
-                                        feelings[match].facebook.pos ++;
-                                        feelings.ALL.facebook.pos ++;
-                                        break;
-                                    case "neg":
-                                        feelings[match].facebook.neg ++;
-                                        feelings.ALL.facebook.neg ++;
-                                        break;
-                                    case "neutral":
-                                        feelings[match].facebook.neutral ++;
-                                        feelings.ALL.facebook.neutral ++;
-                                        break;
-                                }
-                            }
-                        });
-                    });
-                }
+                tweets.forEach((tweet) => {
+                    console.log(tweet.match);
+                    switch (tweet.feeling) {
+                        case "pos":
+                            feelings[tweet.match].twitter.pos ++;
+                            feelings.ALL.twitter.pos ++;
+                            break;
+                        case "neg":
+                            feelings[tweet.match].twitter.neg ++;
+                            feelings.ALL.twitter.neg ++;
+                            break;
+                        case "neutral":
+                            feelings[tweet.match].twitter.neutral ++;
+                            feelings.ALL.twitter.neutral ++;
+                            break;
+                    }
+                });
+                //boucle facebook:
+                comments.forEach((comment) => {
+                    switch (comment.feeling) {
+                        case "pos":
+                            feelings[comment.match].facebook.pos ++;
+                            feelings.ALL.facebook.pos ++;
+                            break;
+                        case "neg":
+                            feelings[comment.match].facebook.neg ++;
+                            feelings.ALL.facebook.neg ++;
+                            break;
+                        case "neutral":
+                            feelings[comment.match].facebook.neutral ++;
+                            feelings.ALL.facebook.neutral ++;
+                            break;
+                    }
+                });
+                console.log(feelings);
                 callback(feelings);
             });
         });
