@@ -1,8 +1,6 @@
 const config = require('../config/config.json');
 const path = require("path");
 const mongo = require('./mongo.js');
-const dbGraph = require('./dbGraph.js');
-const dbSearch = require('./dbSearch.js');
 var Twig = require("twig"),
     express = require('express'),
     app = express();
@@ -10,22 +8,13 @@ var Twig = require("twig"),
 
 app.use(express.static(path.join(__dirname,"../client")));
 app.set('views', path.join(__dirname, '../client/views/'));
-app.use(dbGraph);
-app.use(dbSearch);
-/*app.get('/', (req, res) => {
-	mongo.getParseTweets((tweets) => {
-		res.render('indexGraph.twig', {
-    		//tweets : tweets
-  		});
-	});
-});*/
 
 app.get('/', (req, res) => {
     mongo.retrieveTweetsWithSentiment((tweets) => {
         mongo.retrieveCommentsWithSentiment((comments) => {
             mongo.countAllFeelingByMatch((feelings) => {
                 res.render('index.twig', {
-                    feelings : feelings, //to delete..;
+                    feelings : feelings,
                     tweets : tweets,
                     comments : comments
                 });
@@ -38,7 +27,7 @@ app.get('/graph', (req, res) => {
         mongo.retrieveCommentsWithSentiment((comments) => {
             mongo.countAllFeelingByMatch((feelings) => {
                 res.render('graph.twig', {
-                    feelings : feelings, //to delete..;
+                    feelings : feelings,
                     tweets : tweets,
                     comments : comments
                 });
@@ -47,12 +36,6 @@ app.get('/graph', (req, res) => {
     });
 });
  
-/*app.get('/', function(req, res) {
-    res.render('index.twig', {
-    	message : "Hello World"
-  	});
-});*/
-
 mongo.init().then(() => {
 	app.listen(3000, () => {
 		console.log("Le serveur est en train d'écouter...");
