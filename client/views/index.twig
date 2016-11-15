@@ -1,6 +1,7 @@
 {% extends 'base.twig' %}
 {% block title %}Accueil{% endblock %}
 {% block body %}
+<h2 class="header center">Recherche de contenu</h2>
 <div id="chartdiv"></div>
 <div class="row">
 	<form class="col s12">
@@ -161,17 +162,17 @@
 			{% for tweet in tweets %}
 				match = "{{ tweet.match }}";
 				if( matchArray.indexOf(match) != -1 ) {
-					let tweetMsg = '{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-					let tweetMatch = '<br/>{{ tweet.match }}';
-					let createdTime = "<br/>" + '{{ tweet.created_time }}'.split(" ")[0] + " " + '{{ tweet.created_time }}'.split(" ")[2]+ " " + '{{ tweet.created_time }}'.split(" ")[1]+ " " + '{{ tweet.created_time }}'.split(" ")[5] + " "+ '{{ tweet.created_time }}'.split(" ")[3];
+					let tweetMsg = '<span class="msgItem">{{ tweet.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}</span>';
+					let tweetMatch = '<br/><span class="matchItem">{{ tweet.match }}  | </span> ';
+					let createdTime = "<span class='dateItem'>" + '{{ tweet.created_time }}'.split(" ")[0] + " " + '{{ tweet.created_time }}'.split(" ")[2]+ " " + '{{ tweet.created_time }}'.split(" ")[1]+ " " + '{{ tweet.created_time }}'.split(" ")[5] + " "+ '{{ tweet.created_time }}'.split(" ")[3]+"</span>";
 					{% if tweet.feeling == "pos" %}
-					let feelingTweet ='<i class="petite material-icons right">thumb_up</i>';
+					let feelingTweet ='<a href="#!" class="secondary-content"><i class="petite material-icons right" style="color:green">thumb_up</i></a>';
 					{% endif %}
 					{% if tweet.feeling == "neutral" %}
-					let feelingTweet ='<i class="petite material-icons right">thumbs_up_down</i>';
+					let feelingTweet ='<a href="#!" class="secondary-content"><i class="petite material-icons right" style="color:yellow">thumbs_up_down</i></a>';
 					{% endif %}
 					{% if tweet.feeling == "neg" %}
-					let feelingTweet ='<i class="petite material-icons right">thumb_down</i>';
+					let feelingTweet ='<a href="#!" class="secondary-content"><i class="petite material-icons right" style="color:red">thumb_down</i></a>';
 					{% endif %}
 					//Recherche Twitter (avec verif des doublons):
 					for (let index in research) {
@@ -230,18 +231,18 @@
 			{% for comment in comments %}
 			match = "{{ comment.match }}";
 			if( matchArray.indexOf(match) != -1 ) {
-				let commentMsg = '{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}';
-				let tweetMatch = '<br/>{{ tweet.match }}';
-				let createdTime = '{{ tweet.created_time }}';
+				let commentMsg = '<span class="msgItem">{{ comment.message|replace({"\n":" ", "\r":" ", "'":"\'"}) }}</span>';
+				let commentMatch = '<br/><span class="matchItem">{{ comment.match }}  | </span> ';
+				let createdTime = '<span class="dateItem">{{ comment.created_time }}</span>';
 
 				{% if comment.feeling == "pos" %}
-				let feelingComment ='<i class="petite material-icons right">thumb_up</i>';
+				let feelingComment ='<a href="#!" class="secondary-content"><i class="petite material-icons right" style="color:green">thumb_up</i></a>';
 				{% endif %}
 				{% if comment.feeling == "neutral" %}
-				let feelingComment ='<i class="petite material-icons right">thumbs_up_down</i>';
+				let feelingComment ='<a href="#!" class="secondary-content"><i class="petite material-icons right" style="color:yellow">thumbs_up_down</i></a>';
 				{% endif %}
 				{% if comment.feeling == "neg" %}
-				let feelingComment ='<i class="petite material-icons right">thumb_down</i>';
+				let feelingComment ='<a href="#!" class="secondary-content"><i class="petite material-icons right" style="color:red">thumb_down</i></a>';
 				{% endif %}
 			//Recherche Facebook:
 			for (let index in research) {
@@ -259,7 +260,7 @@
 							break;
 					}
 					facebookFound++;
-					$("#collectionComments").append("<li class='collection-item'>"+commentMsg+feelingComment + tweetMatch + createdTime+"</li>");
+					$("#collectionComments").append("<li class='collection-item'>"+ commentMsg + feelingComment + commentMatch + createdTime+"</li>");
 					break; //Si au moins une occurence du terme de recherche est trouvé on affiche
 				}
 			}
@@ -281,8 +282,8 @@
 	submit.onclick = function(event) {
 		event.preventDefault();
 	    let keyWord = document.getElementById('search').value;
-	    let facebook = document.querySelector("#twitterButton").checked;
-	    let twitter = document.querySelector("#facebookButton").checked;
+	    let facebook = document.querySelector("#facebookButton").checked;
+	    let twitter = document.querySelector("#twitterButton").checked;
 	    let choosenMatch = document.querySelectorAll(".choosenMatch");
 	    let matchArray = [];
 
@@ -300,8 +301,8 @@
 	    	event.preventDefault();
 	    	console.log("toto");
 		    let keyWord = document.getElementById('search').value;
-		    let facebook = document.querySelector("#twitterButton").checked;
-		    let twitter = document.querySelector("#facebookButton").checked;
+		    let facebook = document.querySelector("#facebookButton").checked;
+		    let twitter = document.querySelector("#twitterButton").checked;
 		    let choosenMatch = document.querySelectorAll(".choosenMatch");
 		    let matchArray = [];
 

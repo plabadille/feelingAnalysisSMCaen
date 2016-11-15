@@ -30,6 +30,7 @@ main {
 }
 nav .brand-logo {
   left:25px;
+  font-size: 28px !important;
 }
 nav .nav-wrapper nav ul {
   padding-right: 25px;
@@ -43,6 +44,14 @@ nav .nav-wrapper nav ul {
 }
 .collection .collection-item {
   min-width: 400px;
+}
+.collection .collection-item .msgItem {
+  font-weight: 600;
+}
+.collection .collection-item .matchItem, .collection .collection-item .dateItem {
+  font-weight: 300;
+  font-size: 0.7em;
+  font-style: italic;
 }
 
 /* .amcharts-graph-g1 .amcharts-graph-fill {
